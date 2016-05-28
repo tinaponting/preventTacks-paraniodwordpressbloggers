@@ -1,0 +1,170 @@
+#PREVENT HACKS 
+#Attempt to block portscans #Anyone who tried to portscan us is locked out for an entire day.iptables-A INPUT-m recent--name portscan--rcheck--seconds 86400-j DROiptables-A FORWARD-m recent--name portscan--rcheck--seconds 86400-j DROP
+#Once the day has passed, remove them from the portscan listiptables-A INPUT-m recent--name portscan--remove iptables-A FORWARD-m recent--name portscan--remove
+#These rules add scanners to the portscan list, and log the attempt.iptables-A INPUT-p tcp-m tcp--dport 139-m recent--name portscan--set-j LOG--log-prefix"Portscan:"iptables-A INPUT-p tcp-m tcp--dport 139-m recent--name portscan--set-j DROP
+#Force SYN packets check iptables-A INPUT-p tcp!--syn-m state--state NEW-j DROP#Drop all NULL packets iptables-A INPIT-p tcp--tcp-flags ALL NONE-j DROP#Drop ping iptables-A INPUT-p icmp-m icmp--icmp-type 8-j DROP
+
+<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff|xml|xpi)$">
+#Header unset X-UA-Compatible</FilesMatch></IfModule>
+
+#SecRule REQUEST_HEADERS:User-Agent"^(?:libwww-perl|jakarta commons-httpclient|java|python-(?:urllib|httplib2)|rome client|indy library|pycurl|php|ruby/|gsa-crawler|zend_http_client|srntrackback class|libcurl-agent|eventmachine httpclient|httpcomponents/|apache-httpclient/|vb_wininet|pecl:http|python-requests|go*package http)"\"id:435000,phase:2,t:lowercase,deny,status:403,msg'Generic libraries without proper User-Agent%{REQUEST_HEADERS.User-Agent}'"
+#SecRule REQUEST_HEADERS:User-Agent "(?:xx$|^mozilla/5\.0( \(en-us\))?$|^mozilla/4\.0 \(compatible; msie [67]\.0; windows nt 5\.1\)$|^mozilla/5\.0 (?:gecko|firefox)/|^firefox$|^mozilla firefox|^/5\.0|anonymous/666|a \.net web crawler)" \"id:435010,phase:2,t:lowercase,deny,status:403,msg:'Unknown scanner passing for a real browser'"
+
+#prevent mime based attacks Header set X-Content-Type-Options"nosniff"
+#prevent folder listing IndexIgnore*SetEnvIfNoCase ^User-Agent$.*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures)HTTP_SAFE_BADBOT SetEnvIfNoCase^User-Agent$.*(libwww-perl|aesop_com_spiderman)HTTP_SAFE_BADBOT Deny from env=HTTP_SAFE_BADBOT RewriteEngine On
+#proc/self/environ?no way!RewriteCond%{QUERY_STRING}proc/self/environ[OR]
+#Prevent use of specified methods in HTTP Request RewriteCond%{REQUEST_METHOD}^(HEAD|TRACE|DELETE|TRACK)[NC,OR] 
+#Protect website against clickjacking.#Sending the`X-Frame-Options` header can also protect your website against<IfModule mod_headers.c>Header set X-Frame-Options"DENY"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset X-Frame-Options</FilesMatch></IfModule>
+ 
+#Block out any script trying to set a mosConfig value through the URL RewriteCond%{QUERY_STRING}mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
+#Block out any script trying to base64_encode crap to send via URL RewriteCond%{QUERY_STRING}base64_encode.*(.*)[OR]
+#Block out any script that includes a <script> tag in URL RewriteCond%{QUERY_STRING}(<|%3C).*script.*(>|%3E)[NC,OR]
+#Block out any script trying to set a PHP GLOBALS variable via URL RewriteCond%{QUERY_STRING}GLOBALS(=|[|\%[0-9A-Z]{0,2})[OR]
+#Block out any script trying to modify a _REQUEST variable via URL RewriteCond%{QUERY_STRING} REQUEST(=|[|\%[0-9A-Z]{0,2})
+#Block out any script trying to set a mosConfig value through the URL RewriteCond%{QUERY_STRING} mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
+#Block out  use of illegal or unsafe characters in the Query String variable RewriteCond%{QUERY_STRING}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC]
+#Block out use of illegal or unsafe characters in the HTTP Request RewriteCond%{THE_REQUEST}^.*(\\r|\\n|%0A|%0D).*[NC,OR]
+#Block out use of illegal or unsafe characters in the Referer Variable of the HTTP Request RewriteCond%{HTTP_REFERER}^(.*)(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
+#Block out use of illegal or unsafe characters in any cookie associated with the HTTP Request RewriteCond%{HTTP_COOKIE}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
+#Block out use of illegal characters in URI or use of malformed URI RewriteCond%{REQUEST_URI}^/(,|;|:|<|>|">|"<|/|\\\.\.\\).{0,9999}.*[NC,OR]Block out use of empty User Agent Strings
+#Block out  use of User Agent Strings beginning with java, curl or wget RewriteCond%{HTTP_USER_AGENT}^(java|curl|wget).*[NC,OR]
+#Block out  use of illegal or unsafe characters in the User Agent variable RewriteCond%{HTTP_USER_AGENT}^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR] 
+#Block out  use of User Agent Strings containing references to specific crawler libraries RewriteCond%{HTTP_USER_AGENT}^.*(libwww-perl|curl|wget|python|nikto|scan).*[NC,OR]
+#Block attempts at directory traversal RewriteCond%{QUERY_STRING}\.\./[NC,OR]
+#Block access to "hidden" directories whose names begin with a period.<IfModule mod_rewrite.c>RewriteCond%{SCRIPT_FILENAME}-d RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."-[F]</IfModule>
+
+#Block access to all hidden files and directories.<IfModule mod_rewrite.c> RewriteCond%{REQUEST_URI}"!(^|/)\.well-known/([^./]+./?)+$"[NC]RewriteCond%{SCRIPT_FILENAME}-d[OR]RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."- F]</IfModule>
+#Block comment spam by denying access to no-referrer requests RewriteEngine On RewriteCond%{REQUEST_METHOD}POST RewriteCond%{REQUEST_URI}.wp-comments-post\.php*RewriteCond%{HTTP_REFERER}!.* OR]RewriteCond%{HTTP_USER_AGENT}^$ RewriteRule^(.*)$^http://www.%{HTTP_HOST}/$[R=301,L]
+#Block access to files that can expose sensitive information.<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|php|in[ci]|log|psd|sh|sql|sw[op])|~)$">
+#Block access to hidden files, folders, version control, etc RedirectMatch 403 /\..*$ </IfModule>
+#Block mySQL injects RewriteCond %{QUERY_STRING}(;|<|>|’|”|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark)[NC,OR] 
+#Block attempts at script injectionsRewriteCond%{QUERY_STRING}(<script>|%3Cscript%3E)[NC]RewriteRule .-[F ]</IfModule>
+#BLOCK REVSLIDER SCANS<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}revslider[NC,OR]RewriteCond%{REQUEST_URI}revslider[NC]RewriteRule.*-[F,L]</IfModule>
+#Block comment spam by denying access to no-referrer requests RewriteEngine On RewriteCond %{REQUEST_METHOD}POSTRewriteCond %{REQUEST_URI}.wp-comments-post\.php*RewriteCond %{HTTP_REFERER} !.*[OR]RewriteCond%{HTTP_USER_AGENT}^$RewriteRule^(.*)$^https://www.flashback.org/$[R=301
+#block access to various files #wp-config.php holds your configuration file.<files wp-config.php>order allow,deny,deny from all</files><Files.htaccess,.htaccess1,.svn,error_log>order allow,deny,deny from all</Files>
+#blocking access to readme.txt and html# plugin and themes have readme.txt<files readme.txt>order allow,deny,deny from all</files><files readme.html>order allow,deny,deny from all</files>
+
+#Leave this setting'On'for xdebug's var_dump()output#php_flag html_errors Off
+#Disable server signature ServerSignature Off
+#Disallow PHP Easter Eggs(can be used in fingerprinting attacks to determine RewriteCond%{QUERY_STRING}\=PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[NC]RewriteRule.*-[F,L]
+
+#php_flag register_globals Off #Rename session cookie to something else,than PHPSESSID
+#php_value session.name sid #Do not show you are using PHP
+#php_flag html_errors Off #Show multiple occurrence of error #php_flag ignore_repeated_errors Off
+#php_flag log_errors O Do not display errors in browser(production -Off,development-On)
+#php_flag display_errors Off  Do not display startup errors(production Off,evelopment -On)
+#php_flag display_startup_errors Off #Format errors in plain text
+#php_value error_append_string" "send em to a virtual blackhole of fake email addresses RewriteRule^.*$[R,L]
+#PHP-CGI Vulnerability RewriteCond%{QUERY_STRING}^(%2d|\-)[^=]+$[NC]RewriteRule(.*)-[F,L]
+
+#Do not display errors in browser (production-Off,development-On) #php_flag display_errors Off 
+#Do not display startup errors (production-Off, development-On)#php_flag display_startup_errors Off
+#Do not precede error with string,doesn't accept empty string,use whitespace if you need #php_value error_prepend_string" 
+#Do not prepend to error, doesn't accept empty string,use whitespace if you need #php_value error_append_string"
+#Do not allow any pages to be framed -Defends against CSRF Header set X-Frame-Options DENY
+
+#Show same errors from different sources #php_flag ignore_repeated_source Off
+#Show multiple occurrence of error #php_flag ignore_repeated_errors Off
+
+<IfModule mod_headers.c>IE=edgeHTTP-EQUIV='X-UA-Compatible"</IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{REQUEST_URI} /+[^\.]+$ RewriteRule^(.+[^/])$%{REQUEST_URI}/[R=301,L]</IfModule>
+<IfModule mod_headers.c>Header merge Cache-Control"no-transform"</IfModule>
+<IfModule mod_headers.c>Header setX-Content-Type-Options"nosniff"</IfModule>
+<IfModule mod_rewrite.c>Options+FollowSymlinks Options+SymLinksIfOwnerMatch WordPress turns on the RewriteEngine RewriteEngine On WordPress sets the RewriteBase RewriteBase/</IfModule>
+<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|crx|css|eot|gif|htc|ico|jpe?g|js|m4a|m4v|manifest|mp4|oex|oga|ogg|ogv|otf|pdf|png|safariextz|svgz?|ttf|vcf|webapp|webm|webp|woff|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
+<IfModule mod_headers.c>Header set P3P "policyref=\"/w3c/p3p.xml\",CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\""</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine On RewriteBase /RewriteRule^category/(.+)$ http://www.%{HTTP_HOST}/Removing/category/from Permalinks[R=301,L]RewriteRule^index\.php$-[L]RewriteCond%{REQUEST_FILENAME}!-f RewriteCond%{REQUEST_FILENAME}!-d RewriteRule./index.php[L]</IfModule>
+<IfModule mod_headers.c>Header set Strict-Transport-Security"max-age=16070400;includeSubDomains"</IfModule>
+<IfModule mod_alias.c>redirectmatch 403 attackstring1 redirectmatch 403 attackstring2 redirectmatch403 attackstring3</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine On RewriteBase/RewriteRule^wp-admin/includes/-[F,L]RewriteRule!^wp-includes/-[S=3]RewriteRule^wp-includes/[^/]+\.php$-[F,L]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F,L]RewriteRule^wp-includes/theme-compat/-[F,L]</IfModule>
+ 
+RewriteEngine On RewriteCond%{HTTP_USER_AGENT}^.*(bot|urp|msn).*[NC]RewriteRule^(.*)501.html[NS,NC,L]
+RewriteEngine on RewriteCond%{HTTP_REFERER}!^$RewriteCond%{HTTP_REFERER}!^http://(www\.)?www.%{HTTP_HOST}.*$[NC]RewriteRule\.(gif|jpg|jpeg|bmp|zip|rar|mp3|flv|swf|xml|php|png|css|pdf)$-[F]
+RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g|gif|bmp|png)$[R]
+#Rewrite secure requests properly to prevent SSL cert warnings, e.g. prevent<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443 RewriteRule^^http://www.%{HTTP_HOST}/.*$</IfModule>RewriteRule 
+
+#secure directory by disabling script execution AddHandler cgi-script .php.pl.py.jsp.asp.htm.html.shtml.sh.cgi.*Options-ExecCGI
+#secure wordpress contact forms via referrer check RewriteCond%{HTTP_REFERER}!^http://www.%{HTTP_HOST}/.*$[NC]RewriteCond%{REQUEST_POST}.*contact.php$ RewriteRule.*-[F]
+#Secure Sockets Layer(SSL)<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443RewriteRule^http://www.%{HTTP_HOST}%{REQUEST_URI}[R=301,L]</IfModule>
+
+#Measures to block out SQL injection attacks RewriteCond%{QUERY_STRING}^.*(;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark).*[NC,OR]
+#Level of log detail-log all errors #php_value error_reporting-1 
+#Send all blocked request to homepage with 403 Forbidden error! RewriteRule^(.*)$ index.php[F,L]
+#Format errors in plain text #Leave this setting'On'for xdebug's var_dump()output
+#Size limit for error messages #php_value log_errors_max_len 1024
+#Makes it harder to exploit index.html access.Options All-Indexes RewriteCond%{HTTP_USER_AGENT}^ia_archiver-web\.archive\.org[NC]RewriteRule^(.*)$-[F,L]
+#Enable cross-origin AJAX requests.<IfModule mod_headers.c>Header set Access-Control-Allow-Origin"*"</IfModule>
+#By default allow cross-origin access to web fonts.<IfModule mod_headers.c><FilesMatch"\.(eot|otf|tt[cf]|woff)$">Header set Access-Control-Allow-Origin"*"</FilesMatch></IfModule>
+#Send the CORS header for images when browsers request it.<IfModule mod_setenvif.c><IfModule mod_headers.c><FilesMatch"\.(cur|gif|ico|jpe?g|png|svgz?|webp)$">SetEnvIf Origin":"IS_CORS Header set Access-Control-Allow-Origin"*"env=IS_CORS</FilesMatch></IfModule>
+#META HTTP-EQUIV REPLACEMENTS<FilesMatc "\.(html|htm|php)$">Header set imagetoolbar "no"</FilesMatch>
+#Stop screen flicker in IE on CSS rollovers.BrowserMatch "MSIE"brokenvary=1 BrowserMatch"Mozilla/4.[0-9]{2} brokenvary=1 BrowserMatch "Opera"!brokenvary SetEnvIf brokenvary 1 force-no-vary
+#Content Security Policy (CSP)<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
+#Reflected Cross-Site Scripting(XSS)attacks<IfModule mod_headers.c>Header set X-XSS-Protection "1;mode=block"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset X-XSS-Protection</FilesMatch></IfModule>
+#Only allow JavaScript from the same domain to be run.#Don't allow inline JavaScript to run.Header set X-Content-Security-Policy"allow'self';"
+#Remove Spammy Query Strings<ifModule mod_rewrite.c>RewriteCond%{QUERY_STRING}enter|separated|query|strings|here[NC]RewriteRule.*http://www.%{HTTP_HOST}/$1?[R=301,L]</ifModule>
+#Rules to prevent php execution in uploads RewriteRule^(.*)/uploads/(.*).php(.?)-[F]
+#blocking access to swfupload.swf<files swfupload.swf>order allow,deny deny from all</files>
+#blocking timthumb.php<files timthumb.php>order allow,deny deny from all</files>
+#DefaultType: the default MIME type the server will use for a document.DefaultType text/html
+#Blank UA and Referer RewriteCond%{HTTP_REFERER}^$[NC]RewriteCond%{HTTP_USER_AGENT}^$[NC]RewriteRule^(.*)\.(ico|gif|jpe?g|png|bmp|swf)$-[F,L]
+#Increase performance by disabling allowoverride Allow Override None
+
+#Denies any badly formed HTTP PROTOCOL in the request,0.9, 1.0, and 1.1 only[403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
+#Denies obvious exploit using bogus graphics[403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
+#Denies POST requests by blank user-agents.[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT}^-?$ RewriteCond%{REQUEST_URI}!^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).*[NC]RewriteRule.*-[F,NS,L]
+#Denies obvious trackback spam.[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT} ^.*(opera|mozilla|firefox|msie|safari).*$[NC]RewriteCond%{THE_REQUEST}^[A-Z]{3,9}/.+/trackback/?HTTP/[NC]RewriteRule.*-[F,NS,L]
+#Denies access if var=val contains the string foo.RewriteCond%{QUERY_STRING}fooRewriteRule^/url-[F]
+
+##PROTECT FILES<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch>
+##STRONG HTACCESS PROTECTION</code><Files ~ "^.*\.([Hh][Hh]1[Tt][Aa])">order allow,deny deny from all satisfy all</Files
+##disable directory browsing Options All-Indexes
+##Registration is disabled so.#deny access to wp-signup.php and wp-register.php RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]
+##STRONG PHP PROTECTION</code><Files~ "^.*\.([php])">order allow,deny deny from all satisfy all</Files
+##STRONG config.php PROTECTION</code><Files~ "^.*\.([wp-config.php])">order allow,deny deny from all satisfy all</Files (Not even ju can make any hacks or change anything.....)
+
+<FilesMatch"(\.(bak|Thumbs.db|config|sql|fla|psd|ini|log|sh|inc|swp|dist|wp-content|wp-includes|wp-admin|*.php|wp-config.php|.htaccess,.svn,error_log|.htaccess1|ublinks|plugin|readme.txt|readme.html)|~)$">Order allow,deny,Deny from all Satisfy All</FilesMatch>
+<Limit GET POST HEAD>Order Allow,Deny Allow from all,Deny from env=bad_bot</Limit>
+Order deny,allow,Deny from all<Files~".(xml|css|jpe?g|png|gif|js)$">Allow from all</Files>
+  
+#BLOCK PROXY VISITS<ifModule mod_rewrite.c>RewriteEngine on RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:PROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:XPROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]
+RewriteCond%{HTTP:XROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:X-FORWARDED-FOR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED-FOR}!^$[OR]
+RewriteCond%{HTTP:X-FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-01.domain.tld(.*)
+RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-02.domain.tld(.*)RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-03.domain.tld(.*)RewriteRule^(.*)$-[F]</IfModule>
+
+##########Begin-File injection protection
+#QUERY STRING EXPLOITS RewriteCond%{QUERY_STRING}\.\.\/[NC,OR]RewriteCond%{QUERY_STRING}boot\.ini[NC,OR]RewriteCond%{QUERY_STRING}tag\=[NC,OR]RewriteCond%{QUERY_STRING}ftp\:[NC,OR]RewriteCond%{QUERY_STRING}http\:[NC,OR]RewriteCond%{QUERY_STRING}https\:[NC,OR]
+RewriteCond%{QUERY_STRING}(\< |%3C).*script.*(\>|%3E)[NC,OR]RewriteCond%{QUERY_STRING}(\< |%3C).*iframe.*(\>|%3E)[NC,OR]RewriteCond%{QUERY_STRING}mosConfig_[a-zA-Z_]{1,21}(=|%3D)[NC,OR]RewriteCond%{QUERY_STRING}base64_encode.*\(.*\)[NC,OR]
+RewriteCond%{QUERY_STRING}GLOBALS(=|\[|\%[0-9A-Z]{0,2})[OR]RewriteCond%{QUERY_STRING}REQUEST(=|\[|\%[0-9A-Z]{0,2})[OR]RewriteCond%{QUERY_STRING}^(.*)cPath=http://(.*)$[NC,OR]
+RewriteCond%{QUERY_STRING}^(.*)/self/(.*)$[NC,OR]RewriteCond%{QUERY_STRING}^.*(\[|\]|\(|\)|< |>).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(globals|encode|localhost|loopback).*[NC,OR]
+RewriteCond%{QUERY_STRING}^.*(execute|exec|sp_executesql|request|select|insert|union|declare|drop|delete|create|alter|update|order|char|set|cast|convert|meta|script|truncate).*[NC]
+RewriteCond%{REQUEST_METHOD}GETRewriteCond%{QUERY_STRING}[a-zA-Z0-9_]=http://[OR]RewriteCond%{QUERY_STRING}[a-zA-Z0-9_]=(\.\.//?)+[OR]
+RewriteCond%{QUERY_STRING}[a-zA-Z0-9_]=/([a-z0-9_.]//?)+[NC]RewriteCond%{QUERY_STRING}(<|%3C).*script.*(>|%3E)[NC,OR]RewriteCond%{QUERY_STRING}GLOBALS(=|[|%[0-9A-Z]{0,2})[OR]RewriteCond%{QUERY_STRING}boot.ini[NC,OR]RewriteCond%{QUERY_STRING}tag=[NC,OR]
+RewriteCond%{QUERY_STRING}ftp:[NC,OR]RewriteCond%{QUERY_STRING}http:[NC,OR]RewriteCond%{QUERY_STRING}https:[NC,OR]RewriteCond%{QUERY_STRING}mosConfig[NC,OR]
+RewriteCond%{QUERY_STRING}^.*([|]|(|)||'|"|;|?|*).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%22|%27|%3C|%3E|%5C|%7B|%7C).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%0|%A|%B|%C|%D|%E|%F|127.0).*[NC,OR]
+RewriteCond%{QUERY_STRING}^.*(globals|encode|config|localhost|loopback).*[NC,OR]RewriteCond%{QUERY_STRING}REQUEST(=|[|%[0-9A-Z]{0,2})RewriteCond%{QUERY_STRING}^.*(request|select|insert|union|declare|drop).*[NC]RewriteRule^(.*)$-[F,L]RewriteRule^(.*)$-[F,L]
+##########End-File injection protection
+
+#WP HARDENING SECURITY HEADERS<ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
+#Drop Range header when more than 5 ranges.#CVE-2011-3192 SetEnvIf Range(,.*?){5,}bad-range=1 RequestHeader unset Range env=bad-range#optional logging.CustomLog insert-path-and-name-of-log common env=bad-range
+#Don't allow inline JavaScript to run.Header set X-Content-Security-Policy "allow 'self';"
+#Redirection for all error documents back to index page#a hell lot of fun when a blind spider starts crawling ErrorDocument 400/index.php ErrorDocument 404/index.php ErrorDocument 403/index.php ErrorDocument 500/index.php
+#Username / attchment enumeration protection <IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}author=([0-9]*)[OR]RewriteCond%{QUERY_STRING}attachment_id=([0-9]*)RewriteRule^(.*)$/index.php[F,L]</IfModule>RewriteEngine On RewriteCond%{HTTP_HOST}!^your-site.com$[NC]RewriteRule^(.*)$*http://www.%{HTTP_HOST}$1[L,R=301]
+#Deny Access to All But the Active Theme#Whitelist the active theme. Change "active-theme" to the name of your active theme's directory RewriteCond%{REQUEST_URI}!.*/wp-content/themes/active-theme/.*[NC]RewriteCond%{THE_REQUEST}!.*/wp-content/themes/active-theme/.*[NC]
+#Block access to any directory or document not in the active-theme's directory.RewriteCond%{REQUEST_URI}^.*/wp-content/themes/.*[NC,OR]RewriteCond%{THE_REQUEST}^.*/wp-content/themes/.*[NC]RewriteRule.*-[F,L]
+#Registration is disabled so...#deny access to wp-signup.php and wp-register.phpRewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]RewriteCond%{REQUEST_URI}wp-register\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-register\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-register\.php[NC]RewriteRule.*-[F,NS,L]
+#Rules to block access to WordPress specific files<IfModule mod_rewrite.c>RewriteEngine On#Rules to protect wp-includesRewriteRule^wp-admin/includes/-[F]RewriteRule!^wp-includes/-[S=3]RewriteCond%{SCRIPT_FILENAME}!^(.*)wp-includes/ms-files.phpRewriteRule^wp-includes/[^/]+\.php$-[F]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F]RewriteRule^wp-includes/theme-compat/-[F]
+#Anonymous Java-based spidersRewriteCond%{REMOTE_HOST}^XXX\.23[0-9[OR]RewriteCond%{REMOTE_HOST}^XX\.1[0-9][0-9]RewriteCond%{HTTP_USER_AGENT}^JavaRewriteRule.*-[F]
+#Block Spam Bots and Spam on your website #Block proxies almost of all kind.RewriteEngine on RewriteCond%{HTTP:HTTP_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:X_FORWARDED}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteRule^(.*)$-[F]#Block Spam bots 
+#BLOCK 404 MOBILE REQUESTS<ifmodule mod_rewrite.c>RewriteCond%{REQUEST_URI}/iphone/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobile/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobi/?$[NC,OR]RewriteCond%{REQUEST_URI}/m/?$[NC]RewriteRule(.*)-[F,L]</ifmodule>
+
+#6G FIREWALL/BLACKLIST#6G:[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond%{QUERY_STRING}(eval\()[NC,OR]RewriteCond%{QUERY_STRING}(127\.0\.0\.1)[NC,OR]RewriteCond%{QUERY_STRING}([a-z0-9]{2000})[NC,OR]RewriteCond%{QUERY_STRING}(javascript:)(.*)(;)[NC,OR]RewriteCond%{QUERY_STRING}(base64_encode)(.*)(\()[NC,OR]RewriteCond%{QUERY_STRING}(GLOBALS|REQUEST)(=|\[|%)[NC,OR]RewriteCond%{QUERY_STRING} <|%3C)(.*)script(.*)(>|%3)[NC,OR]RewriteCond%{QUERY_STRING}(\\|\.\.\.|\.\./|~|`|<|>|\|)[NC,OR]RewriteCond%{QUERY_STRING}(boot\.ini|etc/passwd|self/environ)[NC,OR]RewriteCond%{QUERY_STRING}(thumbs?(_editor|open)?|tim(thumb)?)\.php[NC,OR]RewriteCond%{QUERY_STRING}(\'|\")(.*)(drop|insert|md5|select|union)[NC]RewriteRule.*-[F]</IfModule>
+#6G:[REQUEST METHOD]<IfModule mod_rewrite.c>RewriteCond%{REQUEST_METHOD}^(connect|debug|delete|move|put|trace|track)[NC]RewriteRule.*-[F]</IfModule>
+#6G:[REFERRERS]<IfModule mod_rewrite.c>RewriteCond %{HTTP_REFERER}([a-z0-9]{2000})[NC,OR]RewriteCond%{HTTP_REFERER}(semalt.com|todaperfeita)[NC]RewriteRule.*-[F]</IfModule>
+#6G:[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
+#6G:[USER AGENTS]<IfModule mod_setenvif.c>SetEnvIfNoCase User-Agent([a-z0-9]{2000})bad_bot SetEnvIfNoCase User-Agent(archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune)bad_bot<limit GET POST PUT>Order Allow,DenyAllow from AllDeny from env=bad_bot</limit></IfModule>
+
+##Protect Login page (Change to your IP Adress):
+<Files wp-login.php>Order deny,allow Deny from All Allow from 11.111.111.111</Files>
+# END PREVENT HACKS
+
+
