@@ -33,14 +33,18 @@
 #Block access to hidden files, folders, version control, etc RedirectMatch 403 /\..*$ </IfModule>
 #Block mySQL injects RewriteCond %{QUERY_STRING}(;|<|>|’|”|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark)[NC,OR] 
 #Block attempts at script injectionsRewriteCond%{QUERY_STRING}(<script>|%3Cscript%3E)[NC]RewriteRule .-[F ]</IfModule>
-
+#BLOCK COMMON MALICIOUS BOT QUERIES <IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} http\:\/\/www\.google\.com\/humans\.txt\? [NC,OR]RewriteCond %{QUERY_STRING} (img|thumb|thumb_editor|thumbopen).php [NC,OR]RewriteCond %{QUERY_STRING} fckeditor [NC]RewriteCond %{QUERY_STRING} revslider [NC] RewriteRule .* - [F,L]</IfModule>
 #BLOCK REVSLIDER SCANS<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}revslider[NC,OR]RewriteCond%{REQUEST_URI}revslider[NC]RewriteRule.*-[F,L]</IfModule>
 #Block comment spam by denying access to no-referrer requests RewriteEngine On RewriteCond %{REQUEST_METHOD}POSTRewriteCond %{REQUEST_URI}.wp-comments-post\.php*RewriteCond %{HTTP_REFERER} !.*[OR]RewriteCond%{HTTP_USER_AGENT}^$RewriteRule^(.*)$^https://www.flashback.org/$[R=301
 #block access to various files #wp-config.php holds your configuration file.<files wp-config.php>order allow,deny,deny from all</files><Files.htaccess,.htaccess1,.svn,error_log>order allow,deny,deny from all</Files>
 #blocking access to readme.txt and html# plugin and themes have readme.txt<files readme.txt>order allow,deny,deny from all</files><files readme.html>order allow,deny,deny from all</files>
+#BLOCK BROWSER ACCESS TO LOG FILES<Files  ~ "\.log$">Order allow,deny Deny from all</Files>
+#BLOCK ACCESS TO DIRECTORIES WITHOUT A DEFAULT DOCUMENT<IfModule mod_autoindex.c>Options -Indexes </IfModule>
+
 #Leave this setting'On'for xdebug's var_dump()output#php_flag html_errors Off
 #Disable server signature ServerSignature Off
 #Disallow PHP Easter Eggs(can be used in fingerprinting attacks to determine RewriteCond%{QUERY_STRING}\=PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[NC]RewriteRule.*-[F,L]
+#UPGRADE INSECURE RESOURCE REQUESTS <IfModule mod_headers.c>Header set Content-Security-Policy "upgrade-insecure-requests" env=HTTPS</IfModule>
 
 #php_flag register_globals Off #Rename session cookie to something else,than PHPSESSID
 #php_value session.name sid #Do not show you are using PHP
@@ -50,6 +54,8 @@
 #php_flag display_startup_errors Off #Format errors in plain text
 #php_value error_append_string" "send em to a virtual blackhole of fake email addresses RewriteRule^.*$[R,L]
 #PHP-CGI Vulnerability RewriteCond%{QUERY_STRING}^(%2d|\-)[^=]+$[NC]RewriteRule(.*)-[F,L]
+#PHP_value docref_root 0
+#PHP_value docref_ext 0
 
 #Do not display errors in browser (production-Off,development-On) #php_flag display_errors Off 
 #Do not display startup errors (production-Off, development-On)#php_flag display_startup_errors Off
@@ -71,15 +77,20 @@
 <IfModule mod_headers.c>Header set Strict-Transport-Security"max-age=16070400;includeSubDomains"</IfModule>
 <IfModule mod_alias.c>redirectmatch 403 attackstring1 redirectmatch 403 attackstring2 redirectmatch403 attackstring3</IfModule>
 <IfModule mod_rewrite.c>RewriteEngine On RewriteBase/RewriteRule^wp-admin/includes/-[F,L]RewriteRule!^wp-includes/-[S=3]RewriteRule^wp-includes/[^/]+\.php$-[F,L]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F,L]RewriteRule^wp-includes/theme-compat/-[F,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} http\:\/\/www\.google\.com\/humans\.txt\? [NC]RewriteRule .* - [F,L]</IfModule>
+<ifModule mod_headers.c>Header set X-XSS-Protection "1; mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options: "nosniff"</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine onRewriteCond %{HTTP_REFERER} !^$RewriteCond %{HTTP_REFERER} !^http://(www\.)?domain\.com/.*$ [NC]RewriteRule .*\.(gif|jpg)$ http://www.domain.com/eatme.jpe [R,NC,L]</ifModule>
 
 RewriteEngine On RewriteCond%{HTTP_USER_AGENT}^.*(bot|urp|msn).*[NC]RewriteRule^(.*)501.html[NS,NC,L]
 RewriteEngine on RewriteCond%{HTTP_REFERER}!^$RewriteCond%{HTTP_REFERER}!^https://(www\.)?www.%{HTTP_HOST}.*$[NC]RewriteRule\.(gif|jpg|jpeg|bmp|zip|rar|mp3|flv|swf|xml|php|png|css|pdf)$-[F]
 RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g|gif|bmp|png)$[R]
 #Rewrite secure requests properly to prevent SSL cert warnings, e.g. prevent<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443 RewriteRule^^https://www.%{HTTP_HOST}/.*$</IfModule>RewriteRule 
+RewriteEngine on RewriteCond %{REQUEST_METHOD} POSTRewriteCond %{HTTP_REFERER} !^http://(.*)?example\.com [NC]RewriteCond %{REQUEST_URI} ^(.*)?wp-login\.php(.*)$ [OR]RewriteCond %{REQUEST_URI} ^(.*)?wp-admin$RewriteRule ^(.*)$ - [F]
 
-#secure directory by disabling script execution AddHandler cgi-script .php.pl.py.jsp.asp.htm.html.shtml.sh.cgi.*Options-ExecCGI
-#secure wordpress contact forms via referrer check RewriteCond%{HTTP_REFERER}!^https://www.%{HTTP_HOST}/.*$[NC]RewriteCond%{REQUEST_POST}.*contact.php$ RewriteRule.*-[F]
+#Secure directory by disabling script execution AddHandler cgi-script .php.pl.py.jsp.asp.htm.html.shtml.sh.cgi.*Options-ExecCGI
+#Secure wordpress contact forms via referrer check RewriteCond%{HTTP_REFERER}!^https://www.%{HTTP_HOST}/.*$[NC]RewriteCond%{REQUEST_POST}.*contact.php$ RewriteRule.*-[F]
 #Secure Sockets Layer(SSL)<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443RewriteRule^https://www.%{HTTPs_HOST}%{REQUEST_URI}[R=301,L]</IfModule>
+#Secure svn stuffRewriteRule ^(.*/)?\.svn/ - [F,L]
 
 #Measures to block out SQL injection attacks RewriteCond%{QUERY_STRING}^.*(;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark).*[NC,OR]
 #Level of log detail-log all errors #php_value error_reporting-1 
@@ -104,24 +115,33 @@ RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g
 #Blank UA and Referer RewriteCond%{HTTP_REFERER}^$[NC]RewriteCond%{HTTP_USER_AGENT}^$[NC]RewriteRule^(.*)\.(ico|gif|jpe?g|png|bmp|swf)$-[F,L]
 #Increase performance by disabling allowoverride Allow Override None
 
+#DISABLE ACCESS TO WORDPRESS WP-CONFIG FILE<files wp-config.php>order allow,deny deny from all</files>
+#DISABLE ACCESS TO SFTP-CONFIG.JSON<files sftp-config.json>order allow,denyd eny from all</files>
+#DISABLE ACCESS TO INCLUDES. <IfModule mod_rewrite.c> RewriteEngine On RewriteBase / RewriteRule ^wp-admin/includes/ - [F,L]RewriteRule !^wp-includes/ - [S=3]RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]RewriteRule ^wp-includes/theme-compat/ - [F,L]</IfModule>
+#DISABLE ETAG<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
+#DISABLE ETAG<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
+#REMOVE THE `X-POWERED-BY` RESPONSE HEADER<IfModule mod_headers.c>Header unset X-Powered-By</IfModule>
+
 #Denies any badly formed HTTP PROTOCOL in the request,0.9, 1.0, and 1.1 only[403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
 #Denies obvious exploit using bogus graphics[403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
 #Denies POST requests by blank user-agents.[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT}^-?$ RewriteCond%{REQUEST_URI}!^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).*[NC]RewriteRule.*-[F,NS,L]
 #Denies obvious trackback spam.[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT} ^.*(opera|mozilla|firefox|msie|safari).*$[NC]RewriteCond%{THE_REQUEST}^[A-Z]{3,9}/.+/trackback/?HTTP/[NC]RewriteRule.*-[F,NS,L]
 #Denies access if var=val contains the string foo.RewriteCond%{QUERY_STRING}fooRewriteRule^/url-[F]
+#DENY NO REFERER REQUESTS <IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*yourblog.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$ RewriteRule (.*) ^http://%{REMOTE_ADDR}/$ [R=301,L]</IfModule>
 
-##PROTECT FILES<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch>
-##STRONG HTACCESS PROTECTION</code><Files ~ "^.*\.([Hh][Hh]1[Tt][Aa])">order allow,deny deny from all satisfy all</Files
-##disable directory browsing Options All-Indexes
-##Registration is disabled so.#deny access to wp-signup.php and wp-register.php RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]
-##STRONG PHP PROTECTION</code><Files~ "^.*\.([php])">order allow,deny deny from all satisfy all</Files
-##STRONG config.php PROTECTION</code><Files~ "^.*\.([wp-config.php])">order allow,deny deny from all satisfy all</Files (Not even ju can make any hacks or change anything.....)
+#PROTECT FILES<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch>
+#STRONG HTACCESS PROTECTION</code><Files ~ "^.*\.([Hh][Hh]1[Tt][Aa])">order allow,deny deny from all satisfy all</Files
+#disable directory browsing Options All-Indexes
+#Registration is disabled so.#deny access to wp-signup.php and wp-register.php RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]
+#STRONG PHP PROTECTION</code><Files~ "^.*\.([php])">order allow,deny deny from all satisfy all</Files
+#STRONG config.php PROTECTION</code><Files~ "^.*\.([wp-config.php])">order allow,deny deny from all satisfy all</Files (Not even ju can make any hacks or change anything.....)
+#STOP WORDPRESS USERNAME ENUMERATION VULNERABILITY RewriteCond %{REQUEST_URI}  ^/$RewriteCond %{QUERY_STRING} ^/?author=([0-9]*)RewriteRule ^(.*)$ http://[domain.com]/? [L,R=301]RewriteCond %{QUERY_STRING} author=\dRewriteRule ^ /? [L,R=301]
 
 <FilesMatch"(\.(bak|Thumbs.db|config|sql|fla|psd|ini|log|sh|inc|swp|dist|wp-content|wp-includes|wp-admin|*.php|wp-config.php|.htaccess,.svn,error_log|.htaccess1|ublinks|plugin|readme.txt|readme.html)|~)$">Order allow,deny,Deny from all Satisfy All</FilesMatch>
 <Limit GET POST HEAD>Order Allow,Deny Allow from all,Deny from env=bad_bot</Limit>
 Order deny,allow,Deny from all<Files~".(xml|css|jpe?g|png|gif|js)$">Allow from all</Files>
 
-#BLOCK PROXY VISITS<ifModule mod_rewrite.c>RewriteEngine on RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:PROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:XPROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]
+#BLOCK PROXY VISITS <ifModule mod_rewrite.c>RewriteEngine on RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:PROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:XPROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]
 RewriteCond%{HTTP:XROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:X-FORWARDED-FOR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED-FOR}!^$[OR]
 RewriteCond%{HTTP:X-FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-01.domain.tld(.*)
 RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-02.domain.tld(.*)RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-03.domain.tld(.*)RewriteRule^(.*)$-[F]</IfModule>
@@ -139,7 +159,7 @@ RewriteCond%{QUERY_STRING}^.*([|]|(|)||'|"|;|?|*).*[NC,OR]RewriteCond%{QUERY_STR
 RewriteCond%{QUERY_STRING}^.*(globals|encode|config|localhost|loopback).*[NC,OR]RewriteCond%{QUERY_STRING}REQUEST(=|[|%[0-9A-Z]{0,2})RewriteCond%{QUERY_STRING}^.*(request|select|insert|union|declare|drop).*[NC]RewriteRule^(.*)$-[F,L]RewriteRule^(.*)$-[F,L]
 ##########End-File injection protection
 
-#WP HARDENING SECURITY HEADERS<ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
+#WP HARDENING SECURITY HEADERS <ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
 #Drop Range header when more than 5 ranges.#CVE-2011-3192 SetEnvIf Range(,.*?){5,}bad-range=1 RequestHeader unset Range env=bad-range#optional logging.CustomLog insert-path-and-name-of-log common env=bad-range
 #Don't allow inline JavaScript to run.Header set X-Content-Security-Policy "allow 'self';"
 #Redirection for all error documents back to index page#a hell lot of fun when a blind spider starts crawling ErrorDocument 400/index.php ErrorDocument 404/index.php ErrorDocument 403/index.php ErrorDocument 500/index.php
@@ -151,6 +171,8 @@ RewriteCond%{QUERY_STRING}^.*(globals|encode|config|localhost|loopback).*[NC,OR]
 #Anonymous Java-based spidersRewriteCond%{REMOTE_HOST}^XXX\.23[0-9[OR]RewriteCond%{REMOTE_HOST}^XX\.1[0-9][0-9]RewriteCond%{HTTP_USER_AGENT}^JavaRewriteRule.*-[F]
 #Block Spam Bots and Spam on your website #Block proxies almost of all kind.RewriteEngine on RewriteCond%{HTTP:HTTP_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:X_FORWARDED}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteRule^(.*)$-[F]#Block Spam bots 
 #BLOCK 404 MOBILE REQUESTS<ifmodule mod_rewrite.c>RewriteCond%{REQUEST_URI}/iphone/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobile/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobi/?$[NC,OR]RewriteCond%{REQUEST_URI}/m/?$[NC]RewriteRule(.*)-[F,L]</ifmodule>
+#REDIRECT SPAMMER ATTACKS TO BOGUS SITE<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} q=user/registerRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]RewriteCond %{QUERY_STRING} q=node/addRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]</IfModule>
+#Stop spam attack logins and comments <IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*example.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$RewriteRule (.*) http://%{REMOTE_ADDR}/$1 [R=301,L]</ifModule>
 
 #5G BLACKLIST/FIREWALL 
 #5G:[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine On RewriteBase / RewriteCond %{QUERY_STRING} (\"|%22).*(<|>|%3) [NC,OR]RewriteCond %{QUERY_STRING} (javascript:).*(\;) [NC,OR]RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3) [NC,OR]
@@ -166,13 +188,19 @@ RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 
 #5G:[WordPress]<ifModule mod_rewrite.c>RedirectMatch 403 /\$\& RedirectMatch 403 (?i)/\&(t|title)=RedirectMatch 403 (?i)/\.(bash|git|hg|log|svn|swp|tar)RedirectMatch 403 (?i)/(1|contact|i|index1|iprober|phpinfo|phpspy|product|signup|t|test|timthumb|tz|visit|webshell|wp-signup).phpRedirectMatch 403 (?i)/(author-panel|class|database|manage|phpMyAdmin|register|submit-articles|system|usage|webmaster)/?$RedirectMatch 403 (?i)/(=|_mm|cgi|cvs|dbscripts|jsp|rnd|shadow|userfiles)</ifModule>
 #5G:[BAD IPS]<limit GET POST PUT>Order Allow,Deny Allow from all # uncomment/edit/repeat next line to block IPs # Deny from 123.456.789</limit>
 
-#6G FIREWALL/BLACKLIST#6G:[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond%{QUERY_STRING}(eval\()[NC,OR]RewriteCond%{QUERY_STRING}(127\.0\.0\.1)[NC,OR]RewriteCond%{QUERY_STRING}([a-z0-9]{2000})[NC,OR]RewriteCond%{QUERY_STRING}(javascript:)(.*)(;)[NC,OR]RewriteCond%{QUERY_STRING}(base64_encode)(.*)(\()[NC,OR]RewriteCond%{QUERY_STRING}(GLOBALS|REQUEST)(=|\[|%)[NC,OR]RewriteCond%{QUERY_STRING} <|%3C)(.*)script(.*)(>|%3)[NC,OR]RewriteCond%{QUERY_STRING}(\\|\.\.\.|\.\./|~|`|<|>|\|)[NC,OR]RewriteCond%{QUERY_STRING}(boot\.ini|etc/passwd|self/environ)[NC,OR]RewriteCond%{QUERY_STRING}(thumbs?(_editor|open)?|tim(thumb)?)\.php[NC,OR]RewriteCond%{QUERY_STRING}(\'|\")(.*)(drop|insert|md5|select|union)[NC]RewriteRule.*-[F]</IfModule>
+#6G FIREWALL/BLACKLIST
+#6G:[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond%{QUERY_STRING}(eval\()[NC,OR]RewriteCond%{QUERY_STRING}(127\.0\.0\.1)[NC,OR]RewriteCond%{QUERY_STRING}([a-z0-9]{2000})[NC,OR]RewriteCond%{QUERY_STRING}(javascript:)(.*)(;)[NC,OR]RewriteCond%{QUERY_STRING}(base64_encode)(.*)(\()[NC,OR]RewriteCond%{QUERY_STRING}(GLOBALS|REQUEST)(=|\[|%)[NC,OR]RewriteCond%{QUERY_STRING} <|%3C)(.*)script(.*)(>|%3)[NC,OR]RewriteCond%{QUERY_STRING}(\\|\.\.\.|\.\./|~|`|<|>|\|)[NC,OR]RewriteCond%{QUERY_STRING}(boot\.ini|etc/passwd|self/environ)[NC,OR]RewriteCond%{QUERY_STRING}(thumbs?(_editor|open)?|tim(thumb)?)\.php[NC,OR]RewriteCond%{QUERY_STRING}(\'|\")(.*)(drop|insert|md5|select|union)[NC]RewriteRule.*-[F]</IfModule>
 #6G:[REQUEST METHOD]<IfModule mod_rewrite.c>RewriteCond%{REQUEST_METHOD}^(connect|debug|delete|move|put|trace|track)[NC]RewriteRule.*-[F]</IfModule>
 #6G:[REFERRERS]<IfModule mod_rewrite.c>RewriteCond %{HTTP_REFERER}([a-z0-9]{2000})[NC,OR]RewriteCond%{HTTP_REFERER}(semalt.com|todaperfeita)[NC]RewriteRule.*-[F]</IfModule>
 #6G:[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
 #6G:[USER AGENTS]<IfModule mod_setenvif.c>SetEnvIfNoCase User-Agent([a-z0-9]{2000})bad_bot SetEnvIfNoCase User-Agent(archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune)bad_bot<limit GET POST PUT>Order Allow,DenyAllow from AllDeny from env=bad_bot</limit></IfModule>
 
-##Protect Login page:<Files wp-login.php>Order deny,allow Deny from All Allow from my-IP-Adress-HERE</Files>
-##disable directory browsing Options All -Indexes
-##disable view source code browsing Options All -Indexes
+#Protect Login page:<Files wp-login.php>Order deny,allow Deny from All Allow from 99.999.999.168</Files>
+#disable directory browsing Options All -Indexes
+#disable view source code browsing Options All -Indexes
+#prevent folder listing IndexIgnore 
+#protect against DOS attacks by limiting file upload sizeLimitRequestBody 10240000
+
+#ENABLE KEEP-ALIVE<ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
+order allow,denydeny from allsatisfy all
 #END PREVENT HACKS
