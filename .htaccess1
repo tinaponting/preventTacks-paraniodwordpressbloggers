@@ -40,6 +40,7 @@
 #blocking access to readme.txt and html# plugin and themes have readme.txt<files readme.txt>order allow,deny,deny from all</files><files readme.html>order allow,deny,deny from all</files>
 #BLOCK BROWSER ACCESS TO LOG FILES<Files  ~ "\.log$">Order allow,deny Deny from all</Files>
 #BLOCK ACCESS TO DIRECTORIES WITHOUT A DEFAULT DOCUMENT<IfModule mod_autoindex.c>Options -Indexes </IfModule>
+#START XML RPC BLOCKING <Files xmlrpc.php>Order Deny,Allow Deny from all </Files># FINISH XML RPC BLOCKING
 
 #Leave this setting'On'for xdebug's var_dump()output#php_flag html_errors Off
 #Disable server signature ServerSignature Off
@@ -195,12 +196,10 @@ RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 
 #6G:[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
 #6G:[USER AGENTS]<IfModule mod_setenvif.c>SetEnvIfNoCase User-Agent([a-z0-9]{2000})bad_bot SetEnvIfNoCase User-Agent(archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune)bad_bot<limit GET POST PUT>Order Allow,DenyAllow from AllDeny from env=bad_bot</limit></IfModule>
 
-#Protect Login page:<Files wp-login.php>Order deny,allow Deny from All Allow from 99.999.999.168</Files>
 #disable directory browsing Options All -Indexes
 #disable view source code browsing Options All -Indexes
 #prevent folder listing IndexIgnore 
 #protect against DOS attacks by limiting file upload sizeLimitRequestBody 10240000
-
 #ENABLE KEEP-ALIVE<ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
-order allow,denydeny from allsatisfy all
+#Protect Login page:<Files wp-login.php>Order deny,allow Deny from All Allow from YOUR IP NUMBER HERE PLEASE!</Files>
 #END PREVENT HACKS
