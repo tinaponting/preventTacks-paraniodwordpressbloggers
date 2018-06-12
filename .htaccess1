@@ -82,6 +82,7 @@
 <ifModule mod_headers.c>Header set X-XSS-Protection "1; mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options: "nosniff"</IfModule>
 <IfModule mod_rewrite.c>RewriteEngine onRewriteCond %{HTTP_REFERER} !^$RewriteCond %{HTTP_REFERER} !^http://(www\.)?domain\.com/.*$ [NC]RewriteRule .*\.(gif|jpg)$ http://www.domain.com/eatme.jpe [R,NC,L]</ifModule>
 
+RewriteCond %{REQUEST_URI} !^/wp-content/plugins/file/to/exclude\.phpRewriteCond %{REQUEST_URI} !^/wp-content/plugins/directory/to/exclude/RewriteRule wp-content/plugins/(.*\.php)$ - [R=404,L]RewriteCond %{REQUEST_URI} !^/wp-content/themes/file/to/exclude\.phpRewriteCond %{REQUEST_URI} !^/wp-content/themes/directory/to/exclude/RewriteRule wp-content/themes/(.*\.php)$ - [R=404,L]
 RewriteEngine On RewriteCond%{HTTP_USER_AGENT}^.*(bot|urp|msn).*[NC]RewriteRule^(.*)501.html[NS,NC,L]
 RewriteEngine on RewriteCond%{HTTP_REFERER}!^$RewriteCond%{HTTP_REFERER}!^https://(www\.)?www.%{HTTP_HOST}.*$[NC]RewriteRule\.(gif|jpg|jpeg|bmp|zip|rar|mp3|flv|swf|xml|php|png|css|pdf)$-[F]
 RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g|gif|bmp|png)$[R]
@@ -115,6 +116,8 @@ RewriteEngine on RewriteCond %{REQUEST_METHOD} POSTRewriteCond %{HTTP_REFERER} !
 #DefaultType: the default MIME type the server will use for a document.DefaultType text/html
 #Blank UA and Referer RewriteCond%{HTTP_REFERER}^$[NC]RewriteCond%{HTTP_USER_AGENT}^$[NC]RewriteRule^(.*)\.(ico|gif|jpe?g|png|bmp|swf)$-[F,L]
 #Increase performance by disabling allowoverride Allow Override None
+#prevent folder listing IndexIgnore 
+#BEGIN block author scansRewriteEngine OnRewriteBase /RewriteCond %{QUERY_STRING} (author=\d+) [NC]RewriteRule .* - [F]# END block author scans 
 
 #DISABLE ACCESS TO WORDPRESS WP-CONFIG FILE<files wp-config.php>order allow,deny deny from all</files>
 #DISABLE ACCESS TO SFTP-CONFIG.JSON<files sftp-config.json>order allow,denyd eny from all</files>
@@ -122,6 +125,9 @@ RewriteEngine on RewriteCond %{REQUEST_METHOD} POSTRewriteCond %{HTTP_REFERER} !
 #DISABLE ETAG<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
 #DISABLE ETAG<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
 #REMOVE THE `X-POWERED-BY` RESPONSE HEADER<IfModule mod_headers.c>Header unset X-Powered-By</IfModule>
+#DISABLE directory browsing Options All -Indexes
+#DISABLE view source code browsing Options All -Indexes
+#DISABLE hotlinking of images with forbidden or custom image optionRewriteEngine onRewriteCond %{HTTP_REFERER} !^$RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?wpbeginner.com [NC]RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?google.com [NC]RewriteRule \.(jpg|jpeg|png|gif)$ – [NC,F,L] 
 
 #Denies any badly formed HTTP PROTOCOL in the request,0.9, 1.0, and 1.1 only[403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
 #Denies obvious exploit using bogus graphics[403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
@@ -196,9 +202,6 @@ RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 
 #6G:[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
 #6G:[USER AGENTS]<IfModule mod_setenvif.c>SetEnvIfNoCase User-Agent([a-z0-9]{2000})bad_bot SetEnvIfNoCase User-Agent(archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune)bad_bot<limit GET POST PUT>Order Allow,DenyAllow from AllDeny from env=bad_bot</limit></IfModule>
 
-#disable directory browsing Options All -Indexes
-#disable view source code browsing Options All -Indexes
-#prevent folder listing IndexIgnore 
 #protect against DOS attacks by limiting file upload sizeLimitRequestBody 10240000
 #ENABLE KEEP-ALIVE<ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
 #Protect Login page:<Files wp-login.php>Order deny,allow Deny from All Allow from YOUR IP NUMBER HERE PLEASE!</Files>
