@@ -10,7 +10,7 @@ upload it your root folder. Security on wordpress for paranoid bloggers. OBS! he
 I want my wordpress fast and secure by: .htaccess. 
 Please help me make it better! Write a comment, if you miss something.   //The blogging lady
 
-* Updated: 2018-07-17
+* Updated: 2018-078-14  / Some doubles taken away:)
 
 To change your IP Adress: use notepad plus!
 
