@@ -114,6 +114,7 @@ RewriteBase /RewriteCond %{QUERY_STRING} (author=\d+) [NC]RewriteRule .* - [F]
 <IfModule mod_rewrite.c> RewriteEngine On RewriteBase / RewriteRule ^wp-admin/includes/ - [F,L]RewriteRule !^wp-includes/ - [S=3]RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]RewriteRule ^wp-includes/theme-compat/ - [F,L]</IfModule>
 <IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
 <IfModule mod_headers.c>Header unset X-Powered-By</IfModule>
+<IfModule mod_alias.c>RedirectMatch 403 (?i)\.php\.suspectedRedirectMatch 403 (?i)\.(git|well-known)RedirectMatch 403 (?i)apple-app-site-associationRedirectMatch 403 (?i)/autodiscover/autodiscover.xml</IfModule>
 [403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
 [403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
 [403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT}^-?$ RewriteCond%{REQUEST_URI}!^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).*[NC]RewriteRule.*-[F,NS,L]
