@@ -176,5 +176,4 @@ RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 
 <ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
 
 <Files wp-login.php>Order deny,allow Deny from All Allow from MY IP NUMBER HERE</Files>
-RewriteEngine On RewriteCond %{SERVER_PORT} 80 RewriteRule ^(.*)$ https://www.example.com/$1 [R,L]
 #END PREVENT HACKS
