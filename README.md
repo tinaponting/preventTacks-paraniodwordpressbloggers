@@ -14,6 +14,7 @@ Please help me make it better! Write a comment, if you miss something.   //The b
 * Updated: 2018-08-17  / With the latest! :)
 * Updated: 2018-08-21  / with a new .htacces = More speed! + a new threat I added:)
 * Updated: 2018-08-28  /with 1 one new thread I found:)
+* Uppdated 2019-04-10  / Some new threats!
 
 To change your IP Adress: use notepad plus!
 
