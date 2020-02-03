@@ -10,6 +10,7 @@ upload it your root folder. Security on wordpress for paranoid bloggers. OBS! he
 I want my wordpress fast and secure by: .htaccess. 
 Please help me make it better! Write a comment, if you miss something.   //The blogging lady
 
+* Updated: 2020-02-03 Added security and delated one not neeeded!
 * Updated 2019-10-15 Added security and delated one!
 * Updated: 2019-10-13  / Added security risk!
 * Updated: 2018-07-14  / Some doubles taken away:)
