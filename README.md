@@ -21,6 +21,7 @@ Please help me make it better! Write a comment, if you miss something.   //The b
 Extra security; wp-config.php  sset the file rigts to: 444.
 Insert AFTER: require_once(ABSPATH . 'wp-settings.php');
 
+
 define('DISALLOW_FILE_EDIT',true);
 define('DISALLOW_FILE_MODS',true);
 define('FORCE_SSL_ADMIN',true);
@@ -28,6 +29,7 @@ define('FORCE_SSL_LOGIN',true);
 define('FTP_SSL',true);
 define('WP_DISABLE_FATAL_ERROR_HANDLER',true);
 define('WP_AUTO_UPDATE_CORE',true);
+
 
 Set: robots.txt: 444
 Other files like, google, bing to: 444  //not write but readable!
