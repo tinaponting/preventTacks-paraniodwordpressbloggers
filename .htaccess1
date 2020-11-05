@@ -1,49 +1,74 @@
 #PREVENT HACKS 
+<ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
+<IfModule mod_headers.c>IE=edgeHTTP-EQUIV='X-UA-Compatible"</IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{REQUEST_URI} /+[^\.]+$ RewriteRule^(.+[^/])$%{REQUEST_URI}/[R=301,L]</IfModule>
+<IfModule mod_headers.c>Header merge Cache-Control"no-transform"</IfModule>
+<IfModule mod_headers.c>Header setX-Content-Type-Options"nosniff"</IfModule>
+<ifModule mod_headers.c>Header always set Content-Security-Policy "upgrade-insecure-requests;"</IfModule>
+<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
+<IfModule mod_headers.c>Header unset X-Powered-By</IfModule>
+<ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
+<IfModule mod_headers.c>Header set X-XSS-Protection "1; mode=block"</IfModule>
+<IfModule mod_headers.c>Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"</IfModule>
+<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|crx|css|eot|gif|htc|ico|jpe?g|js|m4a|m4v|manifest|mp4|oex|oga|ogg|ogv|otf|pdf|png|safariextz|svgz?|ttf|vcf|webapp|webm|webp|woff|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
+<IfModule mod_headers.c>Header set P3P "policyref=\"/w3c/p3p.xml\",CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\""</IfModule>
+<IfModule mod_headers.c>Header set X-Frame-Options"DENY"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset X-Frame-Options</FilesMatch></IfModule>
+<IfModule mod_headers.c>Header set Access-Control-Allow-Origin"*"</IfModule>
+<IfModule mod_headers.c><FilesMatch"\.(eot|otf|tt[cf]|woff)$">Header set Access-Control-Allow-Origin"*"</FilesMatch></IfModule>
+<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
+<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}author=([0-9]*)[OR]RewriteCond%{QUERY_STRING}attachment_id=([0-9]*)RewriteRule^(.*)$/index.php[F,L]</IfModule>RewriteEngine On RewriteCond%{HTTP_HOST}!^your-site.com$[NC]RewriteRule^(.*)$*http://www.%{HTTP_HOST}$1[L,R=301]
+<IfModule mod_rewrite.c>Options+FollowSymlinks Options+SymLinksIfOwnerMatch WordPress turns on the RewriteEngine RewriteEngine On WordPress sets the RewriteBase RewriteBase/</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine On RewriteBase /RewriteRule^category/(.+)$ https://www.%{HTTP_HOST}/Removing/category/from Permalinks[R=301,L]RewriteRule^index\.php$-[L]RewriteCond%{REQUEST_FILENAME}!-f RewriteCond%{REQUEST_FILENAME}!-d RewriteRule./index.php[L]</IfModule>
+<ifmodule mod_rewrite.c>RewriteCond%{REQUEST_URI}/iphone/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobile/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobi/?$[NC,OR]RewriteCond%{REQUEST_URI}/m/?$[NC]RewriteRule(.*)-[F,L]</ifmodule>
+<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} q=user/registerRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]RewriteCond %{QUERY_STRING} q=node/addRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*example.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$RewriteRule (.*) http://%{REMOTE_ADDR}/$1 [R=301,L]</ifModule>
+<IfModule mod_setenvif.c><IfModule mod_headers.c><FilesMatch"\.(cur|gif|ico|jpe?g|png|svgz?|webp)$">SetEnvIf Origin":"IS_CORS Header set Access-Control-Allow-Origin"*"env=IS_CORS</FilesMatch></IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{REQUEST_URI} !(7g_log.php) [NC] RewriteCond %{REQUEST_METHOD} ^(connect|debug|delete|move|put|trace|track) [NC]	RewriteRule . - [F,L] # RewriteRule . /7g_log.php?log [L,NE,E=7G_REQUEST_METHOD:%1]</IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{REQUEST_METHOD} .* [NC]RewriteCond %{THE_REQUEST}  (YesThisIsAReallyLongRequest|ScanningForResearchPurpose) [NC,OR]RewriteCond %{QUERY_STRING} (YesThisIsAReallyLongRequest|ScanningForResearchPurpose) [NC]RewriteRule .* - [F,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine on RewriteCond %{HTTP_REFERER} !^$RewriteCond %{REQUEST_FILENAME} -fRewriteCond %{REQUEST_FILENAME} \.(gif|jpe?g?|png)$  [NC]RewriteCond %{HTTP_REFERER} !^https?://([^.]+\.)?domain\. [NC] RewriteRule \.(gif|jpe?g?|png)$  - [F,NC,L]
+<IfModule mod_alias.c>RedirectMatch 403 (?i)\.php\.suspected RedirectMatch 403 (?i)\.(git|well-known) RedirectMatch 403 (?i)apple-app-site-association RedirectMatch 403 (?i)/autodiscover/autodiscover.xml</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine On#Rules to protect wp-includesRewriteRule^wp-admin/includes/-[F]RewriteRule!^wp-includes/-[S=3]RewriteCond%{SCRIPT_FILENAME}!^(.*)wp-includes/ms-files.phpRewriteRule^wp-includes/[^/]+\.php$-[F]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F]RewriteRule^wp-includes/theme-compat/-[F]
+<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} (\|%3E) [NC,OR]RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})RewriteRule .* index.php [F,L]</IfModule>
+<IfModule mod_autoindex.c>Options -Indexes </IfModule>
+<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} http\:\/\/www\.google\.com\/humans\.txt\? [NC,OR]RewriteCond %{QUERY_STRING} (img|thumb|thumb_editor|thumbopen).php [NC,OR]RewriteCond %{QUERY_STRING} fckeditor [NC]RewriteCond %{QUERY_STRING} revslider [NC] RewriteRule .* - [F,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}revslider[NC,OR]RewriteCond%{REQUEST_URI}revslider[NC]RewriteRule.*-[F,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteCond%{SCRIPT_FILENAME}-d RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."-[F]</IfModule>
+<IfModule mod_rewrite.c> RewriteCond%{REQUEST_URI}"!(^|/)\.well-known/([^./]+./?)+$"[NC]RewriteCond%{SCRIPT_FILENAME}-d[OR]RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."- F]</IfModule>
+<IfModule mod_alias.c>redirectmatch 403 attackstring1 redirectmatch 403 attackstring2 redirectmatch403 attackstring3</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine On RewriteBase/RewriteRule^wp-admin/includes/-[F,L]RewriteRule!^wp-includes/-[S=3]RewriteRule^wp-includes/[^/]+\.php$-[F,L]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F,L]RewriteRule^wp-includes/theme-compat/-[F,L]</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine onRewriteCond %{HTTP_REFERER} !^$RewriteCond %{HTTP_REFERER} !^http://(www\.)?domain\.com/.*$ [NC]RewriteRule .*\.(gif|jpg)$ http://www.domain.com/eatme.jpe [R,NC,L]</ifModule>
+<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443 RewriteRule^^https://www.%{HTTP_HOST}/.*$</IfModule>RewriteRule
+<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443RewriteRule^https://www.%{HTTPs_HOST}%{REQUEST_URI}[R=301,L]</IfModule>
+<ifModule mod_rewrite.c>RewriteCond%{QUERY_STRING}enter|separated|query|strings|here[NC]RewriteRule.*https://www.%{HTTP_HOST}/$1?[R=301,L]</ifModule>
+<IfModule mod_rewrite.c> RewriteEngine On RewriteBase / RewriteRule ^wp-admin/includes/ - [F,L]RewriteRule !^wp-includes/ - [S=3]RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]RewriteRule ^wp-includes/theme-compat/ - [F,L]</IfModule>
+<IfModule mod_alias.c>RedirectMatch 403 (?i)\.php\.suspectedRedirectMatch 403 (?i)\.(git|well-known)RedirectMatch 403 (?i)apple-app-site-associationRedirectMatch 403 (?i)/autodiscover/autodiscover.xml</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*yourblog.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$ RewriteRule (.*) ^http://%{REMOTE_ADDR}/$ [R=301,L]</IfModule>
+<ifModule mod_rewrite.c>RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)RewriteRule .* - [F]</IfModule>
+<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
+<IfModule mod_rewrite.c>RewriteCond%{REQUEST_METHOD}^(connect|debug|delete|move|put|trace|track)[NC]RewriteRule.*-[F]</IfModule>
+<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond%{QUERY_STRING}(eval\()[NC,OR]RewriteCond%{QUERY_STRING}(127\.0\.0\.1)[NC,OR]RewriteCond%{QUERY_STRING}([a-z0-9]{2000})[NC,OR]RewriteCond%{QUERY_STRING}(javascript:)(.*)(;)[NC,OR]RewriteCond%{QUERY_STRING}(base64_encode)(.*)(\()[NC,OR]RewriteCond%{QUERY_STRING}(GLOBALS|REQUEST)(=|\[|%)[NC,OR]RewriteCond%{QUERY_STRING} <|%3C)(.*)script(.*)(>|%3)[NC,OR]RewriteCond%{QUERY_STRING}(\\|\.\.\.|\.\./|~|`|<|>|\|)[NC,OR]RewriteCond%{QUERY_STRING}(boot\.ini|etc/passwd|self/environ)[NC,OR]RewriteCond%{QUERY_STRING}(thumbs?(_editor|open)?|tim(thumb)?)\.php[NC,OR]RewriteCond%{QUERY_STRING}(\'|\")(.*)(drop|insert|md5|select|union)[NC]RewriteRule.*-[F]</IfModule>
+RewriteCond %{REQUEST_URI} !^/wp-admin [NC] RewriteCond %{QUERY_STRING} author=\d RewriteRule ^ /? [L,R=301]
+RewriteCond %{REQUEST_URI} !^/wp-content/plugins/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/plugins/directory/to/exclude/ RewriteRule wp-content/plugins/(.*\.php)$ - [R=404,L]RewriteCond %{REQUEST_URI} !^/wp-content/themes/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/themes/directory/to/exclude/ RewriteRule wp-content/themes/(.*\.php)$ - [R=404,L]
+RewriteCond%{HTTP_REFERER}!^https://www.%{HTTP_HOST}/.*$[NC]RewriteCond%{REQUEST_POST}.*contact.php$ RewriteRule.*-[F]
+RewriteCond%{QUERY_STRING}^.*(;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark).*[NC,OR]
+RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR] 
+RewriteCond %{REQUEST_URI} ^/$RewriteCond %{QUERY_STRING} ^/?author=([0-9]*)RewriteRule ^(.*)$ http://[domain.com]/? [L,R=301]RewriteCond %{QUERY_STRING} author=\dRewriteRule ^ /? [L,R=301]
+RewriteCond%{QUERY_STRING}(<script>|%3Cscript%3E)[NC]RewriteRule .-[F ]</IfModule>
+RewriteCond%{HTTP_REFERER}^$[NC]RewriteCond%{HTTP_USER_AGENT}^$[NC]RewriteRule^(.*)\.(ico|gif|jpe?g|png|bmp|swf)$-[F,L]
+RewriteEngine On RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})RewriteRule ^(.*)$ index.php [F,L]
+RewriteEngine On RewriteCond%{REQUEST_METHOD}POST RewriteCond%{REQUEST_URI}.wp-comments-post\.php*RewriteCond%{HTTP_REFERER}!.* OR]RewriteCond%{HTTP_USER_AGENT}^$ RewriteRule^(.*)$^http/https/://www.%{HTTP_HOST}/$[R=301,L]
+RewriteEngine On RewriteCond %{REQUEST_METHOD}POSTRewriteCond %{REQUEST_URI}.wp-comments-post\.php*RewriteCond %{HTTP_REFERER} !.*[OR]RewriteCond%{HTTP_USER_AGENT}^$RewriteRule^(.*)$^https://www.flashback.org/$[R=301
+RewriteEngine on RewriteCond%{HTTP_REFERER}!^$RewriteCond%{HTTP_REFERER}!^https://(www\.)?www.%{HTTP_HOST}.*$[NC]RewriteRule\.(gif|jpg|jpeg|bmp|zip|rar|mp3|flv|swf|xml|php|png|css|pdf)$-[F]
+RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g|gif|bmp|png)$[R] 
+RewriteEngine on RewriteCond %{REQUEST_METHOD} POSTRewriteCond %{HTTP_REFERER} !^http://(.*)?example\.com [NC]RewriteCond %{REQUEST_URI} ^(.*)?wp-login\.php(.*)$ [OR]RewriteCond %{REQUEST_URI} ^(.*)?wp-admin$RewriteRule ^(.*)$ - [F]
+RewriteEngine on RewriteCond%{HTTP:HTTP_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:X_FORWARDED}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteRule^(.*)$-[F]#Block Spam bots 
+RewriteEngine On RewriteCond %{REQUEST_METHOD} POST RewriteCond %{HTTP_USER_AGENT} ^$ RewriteRule .* - [F]
 <FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff|xml|xpi)$">
 <FilesMatch "load-scripts\.php|load-styles\.php">Order allow,deny Deny from all </FilesMatch>
 <FilesMatch"(\.(bak|Thumbs.db|config|sql|fla|psd|ini|log|sh|inc|swp|dist|wp-content|wp-includes|wp-admin|*.php|wp-config.php|.htaccess,.svn,error_log|.htaccess1|ublinks|plugin|readme.txt|readme.html)|~)$">Order allow,deny,Deny from all Satisfy All</FilesMatch>
-Order Allow,Deny Allow from all,Deny from env=bad_bot</Limit>
-<Files~".(xml|css|jpe?g|png|gif|jsjspdf|docx|zip|p|rarerror_logp|php.ini|aAp|readme.html)$">Allow from all</Files><Files *.php>deny from all</Files></FilesMatch></IfModule>	
-<IfModule mod_headers.c>Header set X-Content-Type-Options nosniff</IfModule>
-IndexIgnore*SetEnvIfNoCase ^User-Agent$.*(craftbot|download|extract|stripper|sucker|ninja|clshttp|webspider|leacher|collector|grabber|webpictures)HTTP_SAFE_BADBOT SetEnvIfNoCase^User-Agent$.*(libwww-perl|aesop_com_spiderman)HTTP_SAFE_BADBOT Deny from env=HTTP_SAFE_BADBOT RewriteEngine On
-RewriteCond%{QUERY_STRING}proc/self/environ[OR]
-RewriteCond%{REQUEST_METHOD}^(HEAD|TRACE|DELETE|TRACK)[NC,OR] 
-<IfModule mod_headers.c>Header set X-Frame-Options"DENY"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset X-Frame-Options</FilesMatch></IfModule>
-RewriteCond%{QUERY_STRING}\=PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[NC]RewriteRule.*-[F,L]
-Header set Content-Security-Policy "upgrade-insecure-requests" env=HTTPS</IfModule>
-<Directory "/var/www/wp-content/uploads/"><Files "*.php">Order Deny,Allow Deny from All</Files></Directory>
-<files install.php>Order allow,deny Deny from all</files>
-RewriteCond%{QUERY_STRING}mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
-RewriteCond%{QUERY_STRING}base64_encode.*(.*)[OR]
-RewriteCond%{QUERY_STRING}(<|%3C).*script.*(>|%3E)[NC,OR]
-RewriteCond%{QUERY_STRING}GLOBALS(=|[|\%[0-9A-Z]{0,2})[OR]
-RewriteCond%{QUERY_STRING} REQUEST(=|[|\%[0-9A-Z]{0,2})
-RewriteCond%{QUERY_STRING} mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
-RewriteCond%{QUERY_STRING}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC]
-Request RewriteCond%{THE_REQUEST}^.*(\\r|\\n|%0A|%0D).*[NC,OR]
-RewriteCond%{HTTP_REFERER}^(.*)(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
-Request RewriteCond%{HTTP_COOKIE}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
-RewriteCond%{REQUEST_URI}^/(,|;|:|<|>|">|"<|/|\\\.\.\\).{0,9999}.*[NC,OR]Block out use of empty User Agent Strings
-RewriteCond%{HTTP_USER_AGENT}^(java|curl|wget).*[NC,OR]
-RewriteCond%{HTTP_USER_AGENT}^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR] 
-RewriteCond%{HTTP_USER_AGENT}^.*(libwww-perl|curl|wget|python|nikto|scan).*[NC,OR]
-RewriteCond%{QUERY_STRING}\.\./[NC,OR]
-<IfModule mod_rewrite.c>RewriteCond%{SCRIPT_FILENAME}-d RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."-[F]</IfModule>
-<IfModule mod_rewrite.c> RewriteCond%{REQUEST_URI}"!(^|/)\.well-known/([^./]+./?)+$"[NC]RewriteCond%{SCRIPT_FILENAME}-d[OR]RewriteCond%{SCRIPT_FILENAME}-f RewriteRule"(^|/)\."- F]</IfModule>
-RewriteEngine On RewriteCond%{REQUEST_METHOD}POST RewriteCond%{REQUEST_URI}.wp-comments-post\.php*RewriteCond%{HTTP_REFERER}!.* OR]RewriteCond%{HTTP_USER_AGENT}^$ RewriteRule^(.*)$^http/https/://www.%{HTTP_HOST}/$[R=301,L]
-<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|php|in[ci]|log|psd|sh|sql|sw[op])|~)$">
-RedirectMatch 403 /\..*$ </IfModule>
-RewriteCond %{QUERY_STRING}(;|<|>|’|”|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark)[NC,OR] 
-RewriteCond%{QUERY_STRING}(<script>|%3Cscript%3E)[NC]RewriteRule .-[F ]</IfModule>
-<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} http\:\/\/www\.google\.com\/humans\.txt\? [NC,OR]RewriteCond %{QUERY_STRING} (img|thumb|thumb_editor|thumbopen).php [NC,OR]RewriteCond %{QUERY_STRING} fckeditor [NC]RewriteCond %{QUERY_STRING} revslider [NC] RewriteRule .* - [F,L]</IfModule>
-<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}revslider[NC,OR]RewriteCond%{REQUEST_URI}revslider[NC]RewriteRule.*-[F,L]</IfModule>
-RewriteEngine On RewriteCond %{REQUEST_METHOD}POSTRewriteCond %{REQUEST_URI}.wp-comments-post\.php*RewriteCond %{HTTP_REFERER} !.*[OR]RewriteCond%{HTTP_USER_AGENT}^$RewriteRule^(.*)$^https://www.flashback.org/$[R=301
-<files wp-config.php>order allow,deny,deny from all</files><Files.htaccess,.htaccess1,.svn,error_log>order allow,deny,deny from all</Files>
-<files readme.txt>order allow,deny,deny from all</files><files readme.html>order allow,deny,deny from all</files>
-<Files  ~ "\.log$">Order allow,deny Deny from all</Files>
-<IfModule mod_autoindex.c>Options -Indexes </IfModule>
-<Files xmlrpc.php>order deny,allow deny from all</Files>
-<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} (\|%3E) [NC,OR]RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})RewriteRule .* index.php [F,L]</IfModule>
+<Files~".(xml|css|jpe?g|png|gif|jsjspdf|docx|zip|p|rarerror_logp|php.ini|aAp|readme.html)$">Allow from all</Files>
+<Files *.php>deny from all</Files></FilesMatch></IfModule>	
+<FilesMatch "(^#.*#|\.(bak|conf|dist|fla|php|in[ci]|log|psd|sh|sql|sw[op])|~)$">RedirectMatch 403 /\..*$ </IfModule>
 php_value error_reporting-1 
 php_flag html_errors Off 
 Show multiple occurrence of error 
@@ -69,64 +94,36 @@ ServerSignature Off
 php_value error_reporting-1 
 Options All-Indexes
 allowoverride Allow Override None
-<IfModule mod_headers.c>IE=edgeHTTP-EQUIV='X-UA-Compatible"</IfModule>
-<IfModule mod_rewrite.c>RewriteCond %{REQUEST_URI} /+[^\.]+$ RewriteRule^(.+[^/])$%{REQUEST_URI}/[R=301,L]</IfModule>
-<IfModule mod_headers.c>Header merge Cache-Control"no-transform"</IfModule>
-<IfModule mod_headers.c>Header setX-Content-Type-Options"nosniff"</IfModule>
-<IfModule mod_rewrite.c>Options+FollowSymlinks Options+SymLinksIfOwnerMatch WordPress turns on the RewriteEngine RewriteEngine On WordPress sets the RewriteBase RewriteBase/</IfModule>
-<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|crx|css|eot|gif|htc|ico|jpe?g|js|m4a|m4v|manifest|mp4|oex|oga|ogg|ogv|otf|pdf|png|safariextz|svgz?|ttf|vcf|webapp|webm|webp|woff|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
-<IfModule mod_headers.c>Header set P3P "policyref=\"/w3c/p3p.xml\",CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\""</IfModule>
-<IfModule mod_rewrite.c>RewriteEngine On RewriteBase /RewriteRule^category/(.+)$ https://www.%{HTTP_HOST}/Removing/category/from Permalinks[R=301,L]RewriteRule^index\.php$-[L]RewriteCond%{REQUEST_FILENAME}!-f RewriteCond%{REQUEST_FILENAME}!-d RewriteRule./index.php[L]</IfModule>
-<IfModule mod_headers.c>Header set Strict-Transport-Security"max-age=16070400;includeSubDomains"</IfModule>
-<IfModule mod_alias.c>redirectmatch 403 attackstring1 redirectmatch 403 attackstring2 redirectmatch403 attackstring3</IfModule>
-<IfModule mod_rewrite.c>RewriteEngine On RewriteBase/RewriteRule^wp-admin/includes/-[F,L]RewriteRule!^wp-includes/-[S=3]RewriteRule^wp-includes/[^/]+\.php$-[F,L]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F,L]RewriteRule^wp-includes/theme-compat/-[F,L]</IfModule>
-<ifModule mod_headers.c>Header set X-XSS-Protection "1; mode=block "Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options: "nosniff"</IfModule>
-<IfModule mod_rewrite.c>RewriteEngine onRewriteCond %{HTTP_REFERER} !^$RewriteCond %{HTTP_REFERER} !^http://(www\.)?domain\.com/.*$ [NC]RewriteRule .*\.(gif|jpg)$ http://www.domain.com/eatme.jpe [R,NC,L]</ifModule>
-RewriteCond %{QUERY_STRING} author=dRewriteRule ^ /? [L,R=301]
-RewriteEngine On RewriteCond%{HTTP_USER_AGENT}^.*(bot|urp|msn).*[NC]RewriteRule^(.*)501.html[NS,NC,L]
-RewriteEngine on RewriteCond%{HTTP_REFERER}!^$RewriteCond%{HTTP_REFERER}!^https://(www\.)?www.%{HTTP_HOST}.*$[NC]RewriteRule\.(gif|jpg|jpeg|bmp|zip|rar|mp3|flv|swf|xml|php|png|css|pdf)$-[F]
-RewriteEngine On RewriteCond%{HTTP_USER_AGENT}Pinterest[NC]RewriteRule.*\.(jpe?g|gif|bmp|png)$[R]
-<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443 RewriteRule^^https://www.%{HTTP_HOST}/.*$</IfModule>RewriteRule 
-RewriteEngine on RewriteCond %{REQUEST_METHOD} POSTRewriteCond %{HTTP_REFERER} !^http://(.*)?example\.com [NC]RewriteCond %{REQUEST_URI} ^(.*)?wp-login\.php(.*)$ [OR]RewriteCond %{REQUEST_URI} ^(.*)?wp-admin$RewriteRule ^(.*)$ - [F]
-RewriteCond %{REQUEST_URI} !^/wp-content/plugins/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/plugins/directory/to/exclude/ RewriteRule wp-content/plugins/(.*\.php)$ - [R=404,L]RewriteCond %{REQUEST_URI} !^/wp-content/themes/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/themes/directory/to/exclude/ RewriteRule wp-content/themes/(.*\.php)$ - [R=404,L]
-AddHandler cgi-script .php.pl.py.jsp.asp.htm.html.shtml.sh.cgi.*Options-ExecCGI
-RewriteCond%{HTTP_REFERER}!^https://www.%{HTTP_HOST}/.*$[NC]RewriteCond%{REQUEST_POST}.*contact.php$ RewriteRule.*-[F]
-<IfModule mod_rewrite.c>RewriteCond%{SERVER_PORT}!^443RewriteRule^https://www.%{HTTPs_HOST}%{REQUEST_URI}[R=301,L]</IfModule>
-RewriteRule ^(.*/)?\.svn/ - [F,L]
-RewriteCond%{QUERY_STRING}^.*(;|<|>|'|"|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark).*[NC,OR]
-RewriteRule^(.*)$ index.php[F,L]
-<IfModule mod_headers.c>Header set Access-Control-Allow-Origin"*"</IfModule>
-<IfModule mod_headers.c><FilesMatch"\.(eot|otf|tt[cf]|woff)$">Header set Access-Control-Allow-Origin"*"</FilesMatch></IfModule>
-<IfModule mod_setenvif.c><IfModule mod_headers.c><FilesMatch"\.(cur|gif|ico|jpe?g|png|svgz?|webp)$">SetEnvIf Origin":"IS_CORS Header set Access-Control-Allow-Origin"*"env=IS_CORS</FilesMatch></IfModule>
-<FilesMatc "\.(html|htm|php)$">Header set imagetoolbar "no"</FilesMatch>
-<IfModule mod_headers.c>Header set Content-Security-Policy"script-src'self';object-src'self'"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset Content-Security-Policy</FilesMatch></IfModule>
-<IfModule mod_headers.c>Header set X-XSS-Protection "1;mode=block"<FilesMatch"\.(appcache|atom|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|htc|ico|jpe?g|js|json(ld)?|m4[av]|manifest|map|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcf|vtt|webapp|web[mp]|woff2?|xml|xpi)$">Header unset X-XSS-Protection</FilesMatch></IfModule>
-Header set X-Content-Security-Policy"allow'self';"<Directory "/var/www/wp-content/uploads/">
-<ifModule mod_rewrite.c>RewriteCond%{QUERY_STRING}enter|separated|query|strings|here[NC]RewriteRule.*https://www.%{HTTP_HOST}/$1?[R=301,L]</ifModule>
-RewriteRule^(.*)/uploads/(.*).php(.?)-[F]
-<files swfupload.swf>order allow,deny deny from all</files>
-<files timthumb.php>order allow,deny deny from all</files>
-RewriteCond%{HTTP_REFERER}^$[NC]RewriteCond%{HTTP_USER_AGENT}^$[NC]RewriteRule^(.*)\.(ico|gif|jpe?g|png|bmp|swf)$-[F,L]
-RewriteBase /RewriteCond %{QUERY_STRING} (author=\d+) [NC]RewriteRule .* - [F]
-<files wp-config.php>order allow,deny deny from all</files>
-<files sftp-config.json>order allow,denyd eny from all</files>
-<IfModule mod_rewrite.c> RewriteEngine On RewriteBase / RewriteRule ^wp-admin/includes/ - [F,L]RewriteRule !^wp-includes/ - [S=3]RewriteRule ^wp-includes/[^/]+\.php$ - [F,L]RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]RewriteRule ^wp-includes/theme-compat/ - [F,L]</IfModule>
-<IfModule mod_headers.c>Header unset PragmaHeader unset ETag</IfModule>FileETag None
-<IfModule mod_headers.c>Header unset X-Powered-By</IfModule>
-<IfModule mod_alias.c>RedirectMatch 403 (?i)\.php\.suspectedRedirectMatch 403 (?i)\.(git|well-known)RedirectMatch 403 (?i)apple-app-site-associationRedirectMatch 403 (?i)/autodiscover/autodiscover.xml</IfModule>
-[403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
-[403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
-[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT}^-?$ RewriteCond%{REQUEST_URI}!^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).*[NC]RewriteRule.*-[F,NS,L]
-[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT} ^.*(opera|mozilla|firefox|msie|safari).*$[NC]RewriteCond%{THE_REQUEST}^[A-Z]{3,9}/.+/trackback/?HTTP/[NC]RewriteRule.*-[F,NS,L]
-RewriteCond%{QUERY_STRING}fooRewriteRule^/url-[F]
-<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*yourblog.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$ RewriteRule (.*) ^http://%{REMOTE_ADDR}/$ [R=301,L]</IfModule>
-<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch>
-</code><Files ~ "^.*\.([Hh][Hh]1[Tt][Aa])">order allow,deny deny from all satisfy all</Files
-RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]
-</code><Files~ "^.*\.([php])">order allow,deny deny from all satisfy all</Files
-</code><Files~ "^.*\.([wp-config.php])">order allow,deny deny from all satisfy all</Files 
-RewriteCond %{REQUEST_URI}  ^/$RewriteCond %{QUERY_STRING} ^/?author=([0-9]*)RewriteRule ^(.*)$ http://[domain.com]/? [L,R=301]RewriteCond %{QUERY_STRING} author=\dRewriteRule ^ /? [L,R=301]
-<ifModule mod_rewrite.c>RewriteEngine on RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:PROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:XPROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]
+RewriteCond%{QUERY_STRING}proc/self/environ[OR]
+RewriteCond%{REQUEST_METHOD}^(HEAD|TRACE|DELETE|TRACK)[NC,OR] 
+RewriteCond%{QUERY_STRING}\=PHP[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[NC]RewriteRule.*-[F,L]
+RewriteCond%{QUERY_STRING}mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
+RewriteCond%{QUERY_STRING}base64_encode.*(.*)[OR]
+RewriteCond%{QUERY_STRING}(<|%3C).*script.*(>|%3E)[NC,OR]
+RewriteCond%{QUERY_STRING}GLOBALS(=|[|\%[0-9A-Z]{0,2})[OR]
+RewriteCond%{QUERY_STRING} REQUEST(=|[|\%[0-9A-Z]{0,2})
+RewriteCond%{QUERY_STRING} mosConfig[a-zA-Z_]{1,21}(=|\%3D)[OR]
+RewriteCond%{QUERY_STRING}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC]
+Request RewriteCond%{THE_REQUEST}^.*(\\r|\\n|%0A|%0D).*[NC,OR]
+RewriteCond%{HTTP_REFERER}^(.*)(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
+Request RewriteCond%{HTTP_COOKIE}^.*(<|>|’|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR]
+RewriteCond%{REQUEST_URI}^/(,|;|:|<|>|">|"<|/|\\\.\.\\).{0,9999}.*[NC,OR]Block out use of empty User Agent Strings
+RewriteCond%{HTTP_USER_AGENT}^(java|curl|wget).*[NC,OR]
+RewriteCond%{HTTP_USER_AGENT}^.*(<|>|'|%0A|%0D|%27|%3C|%3E|%00).*[NC,OR] 
+RewriteCond%{HTTP_USER_AGENT}^.*(libwww-perl|curl|wget|python|nikto|scan).*[NC,OR]
+RewriteCond%{QUERY_STRING}\.\./[NC,OR]
+RewriteCond %{QUERY_STRING} author=d RewriteRule ^ /? [L,R=301]
+RewriteCond %{REQUEST_URI} !^/wp-content/plugins/file/to/exclude\.php
+RewriteCond %{REQUEST_URI} !^/wp-content/plugins/directory/to/exclude/
+RewriteRule wp-content/plugins/(.*\.php)$ - [R=404,L]
+RewriteCond %{REQUEST_URI} !^/wp-content/themes/file/to/exclude\.php
+RewriteCond %{REQUEST_URI} !^/wp-content/themes/directory/to/exclude/ RewriteRule wp-content/themes/(.*\.php)$ - [R=404,L]
+
+ErrorDocument 401 /index.php?error=404
+ErrorDocument 403 /index.php?error=404
+RedirectMatch 403 (\,|\)\+|/\,/|\{0\}|\(/\(|\.\.\.|\+\+\+|\||\\\"\\\")RedirectMatch 403 \.(cgi|asp|aspx|cfg|dll|exe|jsp|mdb|sql|ini|rar)$ RedirectMatch 403 /(contac|fpw|install|pingserver|register)\.php$ RedirectMatch 403 (base64|crossdomain|localhost|wwwroot|e107\_)RedirectMatch 403 (eval\(|\_vti\_|\(null\)|echo.*kae|config\.xml)RedirectMatch 403 \.well\-known/host\-meta RedirectMatch 403 /function\.array\-rand
+RedirectMatch 403 \)\;\$\(this\)\.html\(RedirectMatch 403 proc/self/environ RedirectMatch 403 msnbot\.htm\)\.\_RedirectMatch 403 /ref\.outcontrol RedirectMatch 403 com\_cropimage RedirectMatch 403 indonesia\.htm
+RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 labels\.rdf RedirectMatch 403 /playing.php RedirectMatch 403 muieblackcat</IfModule>
 RewriteCond%{HTTP:XROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:X-FORWARDED-FOR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED-FOR}!^$[OR]
 RewriteCond%{HTTP:X-FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-01.domain.tld(.*)
 RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-02.domain.tld(.*)RewriteCond%{HTTP_REFERER}!(.*)allowed-proxy-03.domain.tld(.*)RewriteRule^(.*)$-[F]</IfModule>
@@ -140,42 +137,25 @@ RewriteCond%{QUERY_STRING}[a-zA-Z0-9_]=/([a-z0-9_.]//?)+[NC]RewriteCond%{QUERY_S
 RewriteCond%{QUERY_STRING}ftp:[NC,OR]RewriteCond%{QUERY_STRING}http:[NC,OR]RewriteCond%{QUERY_STRING}https:[NC,OR]RewriteCond%{QUERY_STRING}mosConfig[NC,OR]
 RewriteCond%{QUERY_STRING}^.*([|]|(|)||'|"|;|?|*).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%22|%27|%3C|%3E|%5C|%7B|%7C).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%0|%A|%B|%C|%D|%E|%F|127.0).*[NC,OR]
 RewriteCond%{QUERY_STRING}^.*(globals|encode|config|localhost|loopback).*[NC,OR]RewriteCond%{QUERY_STRING}REQUEST(=|[|%[0-9A-Z]{0,2})RewriteCond%{QUERY_STRING}^.*(request|select|insert|union|declare|drop).*[NC]RewriteRule^(.*)$-[F,L]RewriteRule^(.*)$-[F,L]
-<ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
-Header set X-Content-Security-Policy "allow 'self';"
-ErrorDocument 400/index.php ErrorDocument 404/index.php ErrorDocument 403/index.php ErrorDocument 500/index.php
-<IfModule mod_rewrite.c>RewriteCond%{QUERY_STRING}author=([0-9]*)[OR]RewriteCond%{QUERY_STRING}attachment_id=([0-9]*)RewriteRule^(.*)$/index.php[F,L]</IfModule>RewriteEngine On RewriteCond%{HTTP_HOST}!^your-site.com$[NC]RewriteRule^(.*)$*http://www.%{HTTP_HOST}$1[L,R=301]
 RewriteCond%{REQUEST_URI}!.*/wp-content/themes/active-theme/.*[NC]RewriteCond%{THE_REQUEST}!.*/wp-content/themes/active-theme/.*[NC]
 RewriteCond%{REQUEST_URI}^.*/wp-content/themes/.*[NC,OR]RewriteCond%{THE_REQUEST}^.*/wp-content/themes/.*[NC]RewriteRule.*-[F,L]
 RewriteCond%{REQUEST_URI}wp-signup\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-signup\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-signup\.php[NC,OR]RewriteCond%{REQUEST_URI}wp-register\.php[NC,OR]RewriteCond%{QUERY_STRING}wp-register\.php[NC,OR]RewriteCond%{THE_REQUEST}wp-register\.php[NC]RewriteRule.*-[F,NS,L]
-<IfModule mod_rewrite.c>RewriteEngine On#Rules to protect wp-includesRewriteRule^wp-admin/includes/-[F]RewriteRule!^wp-includes/-[S=3]RewriteCond%{SCRIPT_FILENAME}!^(.*)wp-includes/ms-files.phpRewriteRule^wp-includes/[^/]+\.php$-[F]RewriteRule^wp-includes/js/tinymce/langs/.+\.php-[F]RewriteRule^wp-includes/theme-compat/-[F]
 RewriteCond%{REMOTE_HOST}^XXX\.23[0-9[OR]RewriteCond%{REMOTE_HOST}^XX\.1[0-9][0-9]RewriteCond%{HTTP_USER_AGENT}^JavaRewriteRule.*-[F]
-RewriteEngine on RewriteCond%{HTTP:HTTP_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:HTTP_X_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED}!^$[OR]RewriteCond%{HTTP:HTTP_CLIENT_IP}!^$[OR]RewriteCond%{HTTP:HTTP_FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:X_FORWARDED}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:CLIENT_IP}!^$[OR]RewriteCond%{HTTP:FORWARDED_FOR_IP}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]RewriteRule^(.*)$-[F]#Block Spam bots 
-<ifmodule mod_rewrite.c>RewriteCond%{REQUEST_URI}/iphone/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobile/?$[NC,OR]RewriteCond%{REQUEST_URI}/mobi/?$[NC,OR]RewriteCond%{REQUEST_URI}/m/?$[NC]RewriteRule(.*)-[F,L]</ifmodule>
-<IfModule mod_rewrite.c>RewriteCond %{QUERY_STRING} q=user/registerRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]RewriteCond %{QUERY_STRING} q=node/addRewriteRule ^/?$ http://www.nixbla.com/ [R=301,L]</IfModule>
-<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond %{REQUEST_METHOD} POSTRewriteCond %{REQUEST_URI} .*/(wp-comments-post|wp-login)\.php.*RewriteCond %{HTTP_REFERER} !.*example.com.* [OR]RewriteCond %{HTTP_USER_AGENT} ^$RewriteRule (.*) http://%{REMOTE_ADDR}/$1 [R=301,L]</ifModule>
 RewriteCond %{REQUEST_URI} !^/wp-content/plugins/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/plugins/directory/to/exclude/ RewriteRule wp-content/plugins/(.*\.php)$ - [R=404,L]RewriteCond %{REQUEST_URI} !^/wp-content/themes/file/to/exclude\.php RewriteCond %{REQUEST_URI} !^/wp-content/themes/directory/to/exclude/ RewriteRule wp-content/themes/(.*\.php)$ - [R=404,L]
-<FilesMatch “\.(php|php\.)$”>Order Allow,DenyDeny from all</FilesMatch>
-[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine On RewriteBase / RewriteCond %{QUERY_STRING} (\"|%22).*(<|>|%3) [NC,OR]RewriteCond %{QUERY_STRING} (javascript:).*(\;) [NC,OR]RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3) [NC,OR]
-RewriteCond %{QUERY_STRING} (\\|\.\./|`|=\'$|=%27$) [NC,OR]RewriteCond %{QUERY_STRING} (\;|\'|\"|%22).*(union|select|insert|drop|update|md5|benchmark|or|and|if) [NC,OR]RewriteCond %{QUERY_STRING} (base64_encode|localhost|mosconfig) [NC,OR]
-RewriteCond %{QUERY_STRING} (boot\.ini|echo.*kae|etc/passwd) [NC,OR]RewriteCond %{QUERY_STRING} (GLOBALS|REQUEST)(=|\[|%) [NC]RewriteRule .* - [F]</IfModule>
-[USER AGENTS]<IfModule mod_setenvif.c># SetEnvIfNoCase User-Agent ^$ keep_outSetEnvIfNoCase User-Agent (binlar|casper|cmsworldmap|comodo|diavol|dotbot|feedfinder|flicky|ia_archiver|kmccrew|nutch|planetwork|purebot|pycurl|skygrid|sucker|turnit|vikspider|zmeu) keep_out
-<limit GET POST PUT>Order Allow,Deny Allow from all Deny from env=keep_out</limit></IfModule>
-[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (https?|ftp|php)\://RedirectMatch 403 /(https?|ima|ucp)/ RedirectMatch 403 /(Permanent|Better)$RedirectMatch 403 (\=\\\'|\=\\%27|/\\\'/?|\)\.css\()$
-RedirectMatch 403 (\,|\)\+|/\,/|\{0\}|\(/\(|\.\.\.|\+\+\+|\||\\\"\\\")RedirectMatch 403 \.(cgi|asp|aspx|cfg|dll|exe|jsp|mdb|sql|ini|rar)$ RedirectMatch 403 /(contac|fpw|install|pingserver|register)\.php$ RedirectMatch 403 (base64|crossdomain|localhost|wwwroot|e107\_)RedirectMatch 403 (eval\(|\_vti\_|\(null\)|echo.*kae|config\.xml)RedirectMatch 403 \.well\-known/host\-meta RedirectMatch 403 /function\.array\-rand
-RedirectMatch 403 \)\;\$\(this\)\.html\(RedirectMatch 403 proc/self/environ RedirectMatch 403 msnbot\.htm\)\.\_RedirectMatch 403 /ref\.outcontrol RedirectMatch 403 com\_cropimage RedirectMatch 403 indonesia\.htm
-RedirectMatch 403 \{\$itemURL\}RedirectMatch 403 function\(\) RedirectMatch 403 labels\.rdf RedirectMatch 403 /playing.php RedirectMatch 403 muieblackcat</IfModule>
-[REQUEST METHOD]<ifModule mod_rewrite.c>RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)RewriteRule .* - [F]</IfModule>
-[WordPress]<ifModule mod_rewrite.c>RedirectMatch 403 /\$\& RedirectMatch 403 (?i)/\&(t|title)=RedirectMatch 403 (?i)/\.(bash|git|hg|log|svn|swp|tar)RedirectMatch 403 (?i)/(1|contact|i|index1|iprober|phpinfo|phpspy|product|signup|t|test|timthumb|tz|visit|webshell|wp-signup).phpRedirectMatch 403 (?i)/(author-panel|class|database|manage|phpMyAdmin|register|submit-articles|system|usage|webmaster)/?$RedirectMatch 403 (?i)/(=|_mm|cgi|cvs|dbscripts|jsp|rnd|shadow|userfiles)</ifModule>
-[BAD IPS]<limit GET POST PUT>Order Allow,Deny Allow from all # uncomment/edit/repeat next line to block IPs # Deny from 123.456.789</limit>
-[QUERY STRINGS]<IfModule mod_rewrite.c>RewriteEngine OnRewriteCond%{QUERY_STRING}(eval\()[NC,OR]RewriteCond%{QUERY_STRING}(127\.0\.0\.1)[NC,OR]RewriteCond%{QUERY_STRING}([a-z0-9]{2000})[NC,OR]RewriteCond%{QUERY_STRING}(javascript:)(.*)(;)[NC,OR]RewriteCond%{QUERY_STRING}(base64_encode)(.*)(\()[NC,OR]RewriteCond%{QUERY_STRING}(GLOBALS|REQUEST)(=|\[|%)[NC,OR]RewriteCond%{QUERY_STRING} <|%3C)(.*)script(.*)(>|%3)[NC,OR]RewriteCond%{QUERY_STRING}(\\|\.\.\.|\.\./|~|`|<|>|\|)[NC,OR]RewriteCond%{QUERY_STRING}(boot\.ini|etc/passwd|self/environ)[NC,OR]RewriteCond%{QUERY_STRING}(thumbs?(_editor|open)?|tim(thumb)?)\.php[NC,OR]RewriteCond%{QUERY_STRING}(\'|\")(.*)(drop|insert|md5|select|union)[NC]RewriteRule.*-[F]</IfModule>
-[REQUEST METHOD]<IfModule mod_rewrite.c>RewriteCond%{REQUEST_METHOD}^(connect|debug|delete|move|put|trace|track)[NC]RewriteRule.*-[F]</IfModule>
-[REFERRERS]<IfModule mod_rewrite.c>RewriteCond %{HTTP_REFERER}([a-z0-9]{2000})[NC,OR]RewriteCond%{HTTP_REFERER}(semalt.com|todaperfeita)[NC]RewriteRule.*-[F]</IfModule>
-[REQUEST STRINGS]<IfModule mod_alias.c>RedirectMatch 403 (?i([a-z0-9]{2000})RedirectMatch 403 (?i)(https?|ftp|php):/RedirectMatch 403 (?i)(base64_encode)(.*)(\()RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$ RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")RedirectMatch 403(?i)(~|`|<|>|:|;|,|%|\\|\s|\{|\}|\[|\]|\|)RedirectMatch 403(?i)/(=|\$&|_mm|cgi-|etc/passwd|muieblack)RedirectMatch403(?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$RedirectMatch 403(?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php</IfModule>
-[USER AGENTS]<IfModule mod_setenvif.c>SetEnvIfNoCase User-Agent([a-z0-9]{2000})bad_bot SetEnvIfNoCase User-Agent(archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune)bad_bot<limit GET POST PUT>Order Allow,DenyAllow from AllDeny from env=bad_bot</limit></IfModule>
-<ifModule mod_headers.c>Header set Connection keep-alive</ifModule>
+<Directory "/var/www/wp-content/uploads/"><Files "*.php">Order Deny,Allow Deny from All</Files></Directory>
+<Files xmlrpc.php>order deny,allow deny from all</Files>
+<files wp-config.php>order allow,deny,deny from all</files><Files.htaccess,.htaccess1,.svn,error_log>order allow,deny,deny from all</Files>
+<files readme.txt>order allow,deny,deny from all</files><files readme.html>order allow,deny,deny from all</files>
+<Files ~ "\.log$">Order allow,deny Deny from all</Files>
+<files swfupload.swf>order allow,deny deny from all</files>
+<files timthumb.php>order allow,deny deny from all</files>
+<files wp-config.php>order allow,deny deny from all</files>
+<files sftp-config.json>order allow,denyd eny from all</files>
 <Files *.php> deny from all </Files>
-<IfModule mod_rewrite.c>RewriteCond %{REQUEST_URI} !(7g_log.php) [NC] RewriteCond %{REQUEST_METHOD} ^(connect|debug|delete|move|put|trace|track) [NC]	RewriteRule . - [F,L] # RewriteRule . /7g_log.php?log [L,NE,E=7G_REQUEST_METHOD:%1]</IfModule>
-<IfModule mod_rewrite.c>RewriteCond %{REQUEST_METHOD} .* [NC]RewriteCond %{THE_REQUEST}  (YesThisIsAReallyLongRequest|ScanningForResearchPurpose) [NC,OR]RewriteCond %{QUERY_STRING} (YesThisIsAReallyLongRequest|ScanningForResearchPurpose) [NC]RewriteRule .* - [F,L]</IfModule>
-<IfModule mod_rewrite.c>RewriteEngine on RewriteCond %{HTTP_REFERER} !^$RewriteCond %{REQUEST_FILENAME} -fRewriteCond %{REQUEST_FILENAME} \.(gif|jpe?g?|png)$  [NC]RewriteCond %{HTTP_REFERER} !^https?://([^.]+\.)?domain\. [NC] RewriteRule \.(gif|jpe?g?|png)$  - [F,NC,L]
-<IfModule mod_alias.c>RedirectMatch 403 (?i)\.php\.suspected RedirectMatch 403 (?i)\.(git|well-known) RedirectMatch 403 (?i)apple-app-site-association RedirectMatch 403 (?i)/autodiscover/autodiscover.xml</IfModule>
+<FilesMatch “\.(php|php\.)$”>Order Allow,DenyDeny from all</FilesMatch>
+<Files ~ "^.*\.([Hh][Hh1][Tt][Aa])">Order Allow,Deny Deny from all Satisfy all </Files>
+</code><Files~ "^.*\.([php])">order allow,deny deny from all satisfy all</Files
+</code><Files~ "^.*\.([wp-config.php])">order allow,deny deny from all satisfy all</Files
+<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch>
+Header set X-Content-Security-Policy"allow'self';"<Directory "/var/www/wp-content/uploads/">
 #END PREVENT HACKS
