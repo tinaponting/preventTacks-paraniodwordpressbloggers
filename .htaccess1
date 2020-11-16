@@ -92,7 +92,7 @@ php_value log_errors_max_len 0
 ServerSignature Off Options All-Indexes allowoverride Allow Override None
 <FilesMatch "^.*(error_log|wp-config\.php|php.ini|\.[hH][tT][aApP].*)$">Order deny,allowDeny from all</FilesMatch>
 <FilesMatch "(^#.*#|\.(bak|conf|dist|fla|php|in[ci]|log|psd|sh|sql|sw[op])|~)$">RedirectMatch 403 /\..*$ </IfModule>
-<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch></code><Files ~ "^.*\.([Hh][Hh]1[Tt][Aa])">order allow,deny deny from all satisfy all</Files
+<FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch></code><Files ~ "^.*\.([Hh][Hh1][Tt][Aa])">order allow,deny deny from all satisfy all</Files
 <FilesMatch “\.(php|php\.)$”>Order Allow,DenyDeny from all</FilesMatch>
 <FilesMatch "^.*(error_log|wp-config\.php|php.ini|\.[hH][tT][aApP].*)$">Order deny,allow Deny from all</FilesMatch>
 RewriteCond %{REQUEST_URI} (timthumb.php|phpthumb.php|thumb.php|thumbs.php) [NC]RewriteRule . - [S=1]
