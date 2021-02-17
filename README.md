@@ -8,6 +8,7 @@ upload it your root folder. Security on wordpress for paranoid bloggers.
 I want my wordpress fast and secure by: .htaccess. 
 Please help me make it better! Write a comment, if you miss something.   //The blogging lady
 
+* Updated 21-02-16 Added NO scan and Deny IP/ you cand choose and add of your choise, but those two added I´ve had break in my wordpress!
 * Updated 20-11-16 Small thing updated!
 * Updated: 20-11-05  Updated och new!
 * Updated: 2020-08-17  Delated lots of stuff - not a threat nowdays in, WP: 5.5+
@@ -20,11 +21,13 @@ Please help me make it better! Write a comment, if you miss something.   //The b
 * Updated: 2018-08-21  / with a new .htacces = More speed! + a new threat I added:)
 * Updated: 2018-08-28  /with 1 one new thread I found:)
 
-Extra security; wp-config.php  sset the file rigts to: 444.
+### Extra security; wp-config.php  set the file rigts to: 444.
 Insert AFTER: require_once(ABSPATH . 'wp-settings.php');
-
+ini_set('display_errors','Off');
+ini_set('error_reporting', E_ALL );
 define('DISALLOW_FILE_EDIT',true);
-
+define('DISALLOW_FILE_MODS',true);
+define('DISALLOW_FILE_EDIT',true);
 define('DISALLOW_FILE_MODS',true);
 
 
