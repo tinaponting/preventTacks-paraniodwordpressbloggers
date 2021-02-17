@@ -45,7 +45,6 @@
 <ifModule mod_rewrite.c>RewriteEngine on RewriteCond%{HTTP:VIA}!^$[OR]RewriteCond%{HTTP:FORWARDED}!^$[OR]RewriteCond%{HTTP:USERAGENT_VIA}!^$[OR]RewriteCond%{HTTP:X_FORWARDED_FOR}!^$[OR]RewriteCond%{HTTP:PROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:XPROXY_CONNECTION}!^$[OR]RewriteCond%{HTTP:HTTP_PC_REMOTE_ADDR}!^$[OR]
 <ifModule mod_headers.c>Header set X-XSS-Protection"1;mode=block"Header always append X-Frame-Options SAMEORIGIN Header set X-Content-Type-Options:"nosniff</ifModule>
 <IfModule mod_rewrite.c>RewriteCond %{HTTP_REFERER}([a-z0-9]{2000})[NC,OR]RewriteCond%{HTTP_REFERER}(semalt.com|todaperfeita)[NC]RewriteRule.*-[F]</IfModule>
-<IfModule mod_security.c> SecFilterEngine Off SecFilterScanPOST Off </IfModule>
 RewriteBase /RewriteCond %{QUERY_STRING} (author=\d+) [NC]RewriteRule .* - [F]
 RewriteEngine on RewriteCond %{REQUEST_METHOD} POST RewriteCond %{HTTP_REFERER} !^http://(.*)?example\.com [NC]RewriteCond %{REQUEST_URI} ^(.*)?wp-login\.php(.*)$ [OR]RewriteCond %{REQUEST_URI} ^(.*)?wp-admin$ RewriteRule ^(.*)$ - [F]
 RewriteEngine On RewriteCond%{REQUEST_METHOD}POST RewriteCond%{REQUEST_URI}.wp-comments-post\.php*RewriteCond%{HTTP_REFERER}!.* OR]RewriteCond%{HTTP_USER_AGENT}^$ RewriteRule^(.*)$^http/https/://www.%{HTTP_HOST}/$[R=301,L]
