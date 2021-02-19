@@ -8,6 +8,7 @@ upload it your root folder. Security on wordpress for paranoid bloggers.
 I want my wordpress fast and secure by: .htaccess. 
 Please help me make it better! Write a comment, if you miss something.   //The blogging lady
 
+* Updated 21-02-19  Not allowed to break in pomo folder etc
 * Updated 21-02-16 Added NO scan and Deny IP/ you cand choose and add of your choise, but those two added I´ve had break in my wordpress!
 * Updated 20-11-16 Small thing updated!
 * Updated: 20-11-05  Updated och new!
