@@ -89,6 +89,7 @@ php_value error_log /home/path/public_html/domain/PHP_errors.log # [see footnote
 php_value error_reporting -1
 php_value log_errors_max_len 0
 ServerSignature Off Options All-Indexes allowoverride Allow Override None
+<FilesMatch "\.(md|exe|sh|bak|inc|pot|po|mo|log|sql)$"> Order allow,deny Deny from all </FilesMatch>
 <FilesMatch "^.*(error_log|wp-config\.php|php.ini|\.[hH][tT][aApP].*)$">Order deny,allowDeny from all</FilesMatch>
 <FilesMatch "(^#.*#|\.(bak|conf|dist|fla|php|in[ci]|log|psd|sh|sql|sw[op])|~)$">RedirectMatch 403 /\..*$ </IfModule>
 <FilesMatch"\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|htaccess1|config.php|robots.txt)$">Order Allow,Deny Deny from all</FilesMatch></code><Files ~ "^.*\.([Hh][Hh1][Tt][Aa])">order allow,deny deny from all satisfy all</Files
@@ -134,10 +135,6 @@ RewriteCond%{QUERY_STRING}[a-zA-Z0-9_]=/([a-z0-9_.]//?)+[NC]RewriteCond%{QUERY_S
 RewriteCond%{QUERY_STRING}ftp:[NC,OR]RewriteCond%{QUERY_STRING}http:[NC,OR]RewriteCond%{QUERY_STRING}https:[NC,OR]RewriteCond%{QUERY_STRING}mosConfig[NC,OR]
 RewriteCond%{QUERY_STRING}^.*([|]|(|)||'|"|;|?|*).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%22|%27|%3C|%3E|%5C|%7B|%7C).*[NC,OR]RewriteCond%{QUERY_STRING}^.*(%0|%A|%B|%C|%D|%E|%F|127.0).*[NC,OR]
 RewriteCond%{QUERY_STRING}^.*(globals|encode|config|localhost|loopback).*[NC,OR]RewriteCond%{QUERY_STRING}REQUEST(=|[|%[0-9A-Z]{0,2})RewriteCond%{QUERY_STRING}^.*(request|select|insert|union|declare|drop).*[NC]RewriteRule^(.*)$-[F,L]RewriteRule^(.*)$-[F,L]
-[403]RewriteCond%{THE_REQUEST}!^[A-Z]{3,9}.+ HTTP/(0.9|1.0|1.1)[NC]RewriteRule.*-[F,NS,L]
-[403]RewriteCond%{HTTP:Content-Disposition} php[NC]RewriteCond%{HTTP:Content-Type}image/.+[NC]RewriteRule.* -[F,NS,L]
-[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT}^-?$ RewriteCond%{REQUEST_URI}!^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).*[NC]RewriteRule.*-[F,NS,L]
-[403]RewriteCond%{REQUEST_METHOD}=POST RewriteCond%{HTTP_USER_AGENT} ^.*(opera|mozilla|firefox|msie|safari).*$[NC]RewriteCond%{THE_REQUEST}^[A-Z]{3,9}/.+/trackback/?HTTP/[NC]RewriteRule.*-[F,NS,L]
 
 order allow,deny
 deny from 51.75.209.227
